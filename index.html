@@ -57,27 +57,25 @@
     
     .modal-animation { animation: slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
 
-    /* Out-of-the-box Theme Animations */
-    @keyframes fly-bird {
-        0% { transform: translate(-40px, 15px) rotate(20deg) scaleX(-1); }
-        49.9% { transform: translate(50px, -25px) rotate(-15deg) scaleX(-1); }
-        50% { transform: translate(50px, -25px) rotate(15deg) scaleX(1); }
-        99.9% { transform: translate(-40px, 15px) rotate(-20deg) scaleX(1); }
-        100% { transform: translate(-40px, 15px) rotate(20deg) scaleX(-1); }
+    /* New Custom Seasonal Logo Animations */
+    @keyframes swing {
+      0%, 100% { transform: rotate(-15deg); }
+      50% { transform: rotate(15deg); }
     }
-    .animate-fly { animation: fly-bird 5s ease-in-out infinite; display: inline-block; }
+    .animate-swing { animation: swing 2s ease-in-out infinite; transform-origin: top center; }
 
-    @keyframes holy-glow {
-        0%, 100% { filter: drop-shadow(0 0 12px #fde047) brightness(1.1); transform: translateY(0) scale(1); }
-        50% { filter: drop-shadow(0 0 25px #f59e0b) brightness(1.3); transform: translateY(-4px) scale(1.05); }
+    @keyframes beat {
+      0%, 50%, 100% { transform: scale(1); }
+      25% { transform: scale(1.1) rotate(-5deg); }
+      75% { transform: scale(1.1) rotate(5deg); }
     }
-    .animate-holy { animation: holy-glow 3s ease-in-out infinite; }
+    .animate-beat { animation: beat 0.6s ease-in-out infinite; }
 
-    @keyframes marquee {
-        0% { transform: translateX(100%); }
-        100% { transform: translateX(-100%); }
+    @keyframes tree-glow {
+      0%, 100% { filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.5)); transform: scale(1) rotate(-5deg); }
+      50% { filter: drop-shadow(0 0 15px rgba(34, 197, 94, 0.8)); transform: scale(1.05) rotate(5deg); }
     }
-    .animate-marquee { display: inline-block; white-space: nowrap; animation: marquee 15s linear infinite; }
+    .animate-tree { animation: tree-glow 2.5s ease-in-out infinite; }
 
     .cart-badge { position: absolute; top: -6px; right: -6px; background: white; color: var(--theme-from); border: 2px solid var(--theme-from); border-radius: 50%; width: 22px; height: 22px; font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: 900; box-shadow: 0 4px 10px var(--theme-bg-glow); }
     
@@ -98,7 +96,9 @@
   <!-- Announcement Banner -->
   <div id="announcement-banner" class="hidden w-full overflow-hidden text-white py-2 px-4 shadow-md relative z-[60]" style="background: linear-gradient(90deg, var(--theme-from), var(--theme-to));">
     <div class="w-full flex justify-center items-center font-bold text-sm tracking-wide">
-       <span class="mr-2">📢</span> <span id="announcement-text" class="animate-marquee md:animate-none whitespace-normal md:whitespace-nowrap"></span> <span class="ml-2">📢</span>
+       <span class="mr-2">📢</span> 
+       <span id="announcement-text" class="transition-opacity duration-500 opacity-100 text-center"></span> 
+       <span class="ml-2">📢</span>
     </div>
   </div>
 
@@ -112,11 +112,11 @@
         <!-- Interactive Logo Section -->
         <div class="flex items-center gap-3 cursor-pointer group relative" onclick="window.showMainView('home')">
           <div class="relative z-10">
-            <img src="logo3.jpeg" alt="Growthwell Logo" class="h-10 sm:h-12 object-contain rounded-lg group-hover:scale-105 transition-transform drop-shadow-sm bg-white">
-            <!-- Theme Decorations -->
-            <div id="dec-christmas" class="hidden absolute -top-4 -left-3 z-20 text-3xl transform -rotate-12 drop-shadow-md">🎅</div>
-            <div id="dec-vesak" class="hidden absolute -top-2 -right-6 z-20 text-3xl animate-holy">🛕</div>
-            <div id="dec-avurudu" class="hidden absolute top-2 left-1/2 z-20 text-3xl drop-shadow-md pointer-events-none"><span class="animate-fly">🐦‍⬛</span></div>
+            <img src="logo3.jpeg" alt="Growthwell Logo" class="h-10 sm:h-12 object-contain rounded-lg group-hover:scale-105 transition-transform drop-shadow-sm bg-white relative z-10">
+            <!-- Seasonal Overlays -->
+            <div id="dec-christmas" class="hidden absolute -top-3 -right-3 z-20 text-3xl animate-tree pointer-events-none">🎄</div>
+            <div id="dec-vesak" class="hidden absolute -bottom-2 -right-4 z-20 text-3xl animate-swing pointer-events-none">🏮</div>
+            <div id="dec-avurudu" class="hidden absolute -top-3 -right-3 z-20 text-3xl animate-beat pointer-events-none">🪘</div>
           </div>
         </div>
         
@@ -333,8 +333,8 @@
         </button>
 
         <!-- Left Image -->
-        <div class="w-full md:w-1/2 h-64 md:h-auto relative bg-white">
-          <img id="modal-img" src="" alt="Product" class="w-full h-full object-cover">
+        <div class="w-full md:w-1/2 h-64 md:h-auto relative bg-white flex items-center justify-center p-6">
+          <img id="modal-img" src="" alt="Product" class="max-w-full max-h-full object-contain">
           <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent md:hidden"></div>
         </div>
 
@@ -352,7 +352,7 @@
           
           <div class="mb-8 flex-grow">
             <h4 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2 border-b border-slate-100 pb-2">Description</h4>
-            <p id="modal-desc" class="text-slate-600 font-medium leading-relaxed">Description goes here...</p>
+            <p id="modal-desc" class="text-slate-600 font-medium leading-relaxed whitespace-pre-wrap">Description goes here...</p>
           </div>
 
           <!-- Add to Cart Action -->
@@ -535,6 +535,7 @@
     let cart = [];
     let allStoreProducts = [];
     let currentCategoryFilter = 'All';
+    let announcementInterval = null;
 
     // --- THEME LOGIC ---
     const themeConfig = {
@@ -609,11 +610,33 @@
               applySiteTheme(data.theme || 'default');
               
               // Store Announcement Logic
+              clearInterval(announcementInterval);
               const noticeBanner = document.getElementById('announcement-banner');
               const noticeText = document.getElementById('announcement-text');
-              if(data.showNotice && data.notice) {
-                  noticeText.innerText = data.notice;
+              
+              let noticesArray = [];
+              if(data.notices && data.notices.length > 0) noticesArray = data.notices;
+              else if(data.notice) noticesArray = [data.notice];
+
+              if(data.showNotice && noticesArray.length > 0) {
                   noticeBanner.classList.remove('hidden');
+                  let currentIndex = 0;
+                  
+                  const updateText = () => {
+                      noticeText.classList.remove('opacity-100');
+                      noticeText.classList.add('opacity-0');
+                      setTimeout(() => {
+                          noticeText.innerText = noticesArray[currentIndex];
+                          noticeText.classList.remove('opacity-0');
+                          noticeText.classList.add('opacity-100');
+                          currentIndex = (currentIndex + 1) % noticesArray.length;
+                      }, 500); 
+                  };
+                  
+                  updateText(); 
+                  if(noticesArray.length > 1) {
+                      announcementInterval = setInterval(updateText, 5000); 
+                  }
               } else {
                   noticeBanner.classList.add('hidden');
               }
@@ -701,8 +724,8 @@
         
         list.innerHTML += `
           <div onclick="window.openProductModal('${p.id}')" class="glass-card rounded-3xl hover:-translate-y-2 transition-all duration-300 overflow-hidden flex flex-col h-full group hover:shadow-2xl border border-slate-200 cursor-pointer" onmouseover="this.style.borderColor='var(--theme-from)'; this.style.boxShadow='0 10px 40px -10px var(--theme-bg-glow)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.5)'; this.style.boxShadow='0 10px 40px -10px rgba(0,0,0,0.2)'">
-            <div class="h-56 relative overflow-hidden bg-white">
-              <img src="${p.image || 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=400&q=80'}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+            <div class="h-56 relative overflow-hidden bg-white flex items-center justify-center p-4">
+              <img src="${p.image || 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=400&q=80'}" class="max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-110">
               ${typeBadge}
               <div class="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-white to-transparent"></div>
             </div>
@@ -791,7 +814,7 @@
         total += (item.price * item.qty);
         list.innerHTML += `
           <div class="flex items-center gap-4 bg-white/80 p-4 rounded-2xl border border-slate-200 transition" onmouseover="this.style.borderColor='var(--theme-from)'" onmouseout="this.style.borderColor='#e2e8f0'">
-            <img src="${item.image}" class="w-24 h-24 object-cover rounded-xl border border-slate-100">
+            <img src="${item.image}" class="w-24 h-24 object-contain bg-white p-2 rounded-xl border border-slate-100">
             <div class="flex-grow">
               <h4 class="font-bold text-slate-800 text-lg leading-tight mb-1">${item.name}</h4>
               <p class="font-bold" style="color: var(--theme-text);">Rs. ${parseFloat(item.price).toFixed(2)}</p>
