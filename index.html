@@ -57,12 +57,33 @@
     
     .modal-animation { animation: slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
 
-    /* New Custom Seasonal Logo Animations */
+    /* Out-of-the-box Theme Animations */
+    @keyframes fly-bird {
+        0% { transform: translate(-40px, 15px) rotate(20deg) scaleX(-1); }
+        49.9% { transform: translate(50px, -25px) rotate(-15deg) scaleX(-1); }
+        50% { transform: translate(50px, -25px) rotate(15deg) scaleX(1); }
+        99.9% { transform: translate(-40px, 15px) rotate(-20deg) scaleX(1); }
+        100% { transform: translate(-40px, 15px) rotate(20deg) scaleX(-1); }
+    }
+    .animate-fly { animation: fly-bird 5s ease-in-out infinite; display: inline-block; }
+
+    @keyframes holy-glow {
+        0%, 100% { filter: drop-shadow(0 0 12px #fde047) brightness(1.1); transform: translateY(0) scale(1); }
+        50% { filter: drop-shadow(0 0 25px #f59e0b) brightness(1.3); transform: translateY(-4px) scale(1.05); }
+    }
+    .animate-holy { animation: holy-glow 3s ease-in-out infinite; }
+
     @keyframes swing {
       0%, 100% { transform: rotate(-15deg); }
       50% { transform: rotate(15deg); }
     }
     .animate-swing { animation: swing 2s ease-in-out infinite; transform-origin: top center; }
+
+    @keyframes tree-glow {
+      0%, 100% { filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.5)); transform: scale(1) rotate(-5deg); }
+      50% { filter: drop-shadow(0 0 15px rgba(34, 197, 94, 0.8)); transform: scale(1.05) rotate(5deg); }
+    }
+    .animate-tree { animation: tree-glow 2.5s ease-in-out infinite; }
 
     @keyframes beat {
       0%, 50%, 100% { transform: scale(1); }
@@ -71,11 +92,11 @@
     }
     .animate-beat { animation: beat 0.6s ease-in-out infinite; }
 
-    @keyframes tree-glow {
-      0%, 100% { filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.5)); transform: scale(1) rotate(-5deg); }
-      50% { filter: drop-shadow(0 0 15px rgba(34, 197, 94, 0.8)); transform: scale(1.05) rotate(5deg); }
+    @keyframes marquee {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
     }
-    .animate-tree { animation: tree-glow 2.5s ease-in-out infinite; }
+    .animate-marquee { display: inline-block; white-space: nowrap; animation: marquee 15s linear infinite; }
 
     .cart-badge { position: absolute; top: -6px; right: -6px; background: white; color: var(--theme-from); border: 2px solid var(--theme-from); border-radius: 50%; width: 22px; height: 22px; font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: 900; box-shadow: 0 4px 10px var(--theme-bg-glow); }
     
@@ -111,12 +132,26 @@
         
         <!-- Interactive Logo Section -->
         <div class="flex items-center gap-3 cursor-pointer group relative" onclick="window.showMainView('home')">
-          <div class="relative z-10">
+          <div class="relative z-10 flex items-center">
             <img src="logo3.jpeg" alt="Growthwell Logo" class="h-10 sm:h-12 object-contain rounded-lg group-hover:scale-105 transition-transform drop-shadow-sm bg-white relative z-10">
-            <!-- Seasonal Overlays -->
-            <div id="dec-christmas" class="hidden absolute -top-3 -right-3 z-20 text-3xl animate-tree pointer-events-none">🎄</div>
-            <div id="dec-vesak" class="hidden absolute -bottom-2 -right-4 z-20 text-3xl animate-swing pointer-events-none">🏮</div>
-            <div id="dec-avurudu" class="hidden absolute -top-3 -right-3 z-20 text-3xl animate-beat pointer-events-none">🪘</div>
+            <!-- Theme Decorations -->
+            <div id="dec-christmas" class="hidden absolute inset-0 z-20 pointer-events-none">
+              <div class="absolute -top-4 -left-3 text-3xl transform -rotate-12 drop-shadow-md">🎅</div>
+              <div class="absolute -top-3 -right-3 text-3xl animate-tree">🎄</div>
+              <img src="pngwing.com.png" alt="Christmas" class="absolute -bottom-3 -right-6 w-11 h-11 object-contain bg-white/95 rounded-full shadow-xl border border-blue-400/50 p-1 animate-swing">
+            </div>
+            
+            <div id="dec-vesak" class="hidden absolute inset-0 z-20 pointer-events-none">
+              <div class="absolute -top-2 -right-6 text-3xl animate-holy"></div>
+              <div class="absolute -bottom-2 -right-4 text-3xl animate-swing">🏮</div>
+              <img src="pngwing.com (2).png" alt="Vesak" class="absolute -bottom-3 -left-4 w-11 h-11 object-contain bg-white/95 rounded-full shadow-xl border border-amber-400/50 p-1 animate-holy">
+            </div>
+            
+            <div id="dec-avurudu" class="hidden absolute inset-0 z-20 pointer-events-none">
+              <div class="absolute -bottom-3 -left-4 text-3xl animate-beat">🪘</div>
+              <div class="absolute top-2 left-1/2 text-3xl drop-shadow-md"><span class="animate-fly"></span></div>
+              <img src="pngwing.com (41).png" alt="Avurudu" class="absolute -top-1 -right-12 w-16 h-auto object-contain bg-white/95 rounded-lg shadow-xl border border-orange-400/50 p-1 animate-float">
+            </div>
           </div>
         </div>
         
