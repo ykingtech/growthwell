@@ -34,20 +34,25 @@
     
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     
-    @keyframes fly-bird {
-        0% { transform: translate(-30px, 10px) rotate(20deg) scaleX(-1); }
-        49.9% { transform: translate(40px, -20px) rotate(-15deg) scaleX(-1); }
-        50% { transform: translate(40px, -20px) rotate(15deg) scaleX(1); }
-        99.9% { transform: translate(-30px, 10px) rotate(-20deg) scaleX(1); }
-        100% { transform: translate(-30px, 10px) rotate(20deg) scaleX(-1); }
+    /* New Custom Seasonal Logo Animations */
+    @keyframes swing {
+      0%, 100% { transform: rotate(-15deg); }
+      50% { transform: rotate(15deg); }
     }
-    .animate-fly { animation: fly-bird 5s ease-in-out infinite; display: inline-block; }
+    .animate-swing { animation: swing 2s ease-in-out infinite; transform-origin: top center; }
 
-    @keyframes holy-glow {
-        0%, 100% { filter: drop-shadow(0 0 8px #fde047) brightness(1.1); transform: translateY(0) scale(1); }
-        50% { filter: drop-shadow(0 0 20px #f59e0b) brightness(1.3); transform: translateY(-3px) scale(1.05); }
+    @keyframes beat {
+      0%, 50%, 100% { transform: scale(1); }
+      25% { transform: scale(1.1) rotate(-5deg); }
+      75% { transform: scale(1.1) rotate(5deg); }
     }
-    .animate-holy { animation: holy-glow 3s ease-in-out infinite; }
+    .animate-beat { animation: beat 0.6s ease-in-out infinite; }
+
+    @keyframes tree-glow {
+      0%, 100% { filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.5)); transform: scale(1) rotate(-5deg); }
+      50% { filter: drop-shadow(0 0 15px rgba(34, 197, 94, 0.8)); transform: scale(1.05) rotate(5deg); }
+    }
+    .animate-tree { animation: tree-glow 2.5s ease-in-out infinite; }
 
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
@@ -69,9 +74,10 @@
       <div class="flex items-center gap-3">
         <div class="relative">
           <img src="logo3.jpeg" alt="Growthwell" class="h-10 md:h-12 object-contain rounded-lg shadow-lg relative z-10 bg-white">
-          <div id="dec-christmas" class="hidden absolute -top-4 -left-3 z-20 text-3xl transform -rotate-12 drop-shadow-md">🎅</div>
-          <div id="dec-vesak" class="hidden absolute -top-2 -right-6 z-20 text-3xl animate-holy">🛕</div>
-          <div id="dec-avurudu" class="hidden absolute top-2 left-1/2 z-20 text-3xl drop-shadow-md pointer-events-none"><span class="animate-fly">🐦‍⬛</span></div>
+          <!-- Seasonal Overlays -->
+          <div id="dec-christmas" class="hidden absolute -top-3 -right-3 z-20 text-3xl animate-tree pointer-events-none">🎄</div>
+          <div id="dec-vesak" class="hidden absolute -bottom-2 -right-4 z-20 text-3xl animate-swing pointer-events-none">🏮</div>
+          <div id="dec-avurudu" class="hidden absolute -top-3 -right-3 z-20 text-3xl animate-beat pointer-events-none">🪘</div>
         </div>
         
         <div>
@@ -159,9 +165,9 @@
               </div>
             </div>
             
-            <!-- Image Preview -->
-            <div id="previewContainer" class="hidden mb-4 relative group">
-              <img id="imgPreview" class="w-full h-40 object-cover rounded-xl border border-slate-600">
+            <!-- Image Preview (Fixed to prevent cropping) -->
+            <div id="previewContainer" class="hidden mb-4 relative group bg-white rounded-xl">
+              <img id="imgPreview" class="w-full h-40 object-contain p-2 rounded-xl border border-slate-600">
               <button onclick="clearImage()" class="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-lg opacity-100 md:opacity-0 group-hover:opacity-100 transition shadow-lg"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
 
@@ -219,14 +225,14 @@
         </div>
       </div>
       
-      <!-- Store Announcement Settings -->
+      <!-- Store Announcements Settings -->
       <div class="glass-panel p-6 md:p-8 rounded-3xl mb-8 border border-slate-600 shadow-2xl relative overflow-hidden">
         <div class="absolute -right-10 -top-10 text-9xl opacity-5 grayscale">📢</div>
-        <h3 class="text-2xl font-bold text-white mb-2 relative z-10">Store Announcement</h3>
-        <p class="text-slate-400 mb-6 text-sm relative z-10">Display a global notice bar at the top of the main website for all users (e.g. Holidays, Special Discounts).</p>
+        <h3 class="text-2xl font-bold text-white mb-2 relative z-10">Store Announcements</h3>
+        <p class="text-slate-400 mb-6 text-sm relative z-10 leading-relaxed">Display a rotating global notice bar at the top of the main website. <strong class="text-white">Write each announcement on a new line.</strong> They will automatically rotate every 5 seconds.</p>
         
         <div class="space-y-4 relative z-10 max-w-3xl">
-          <textarea id="noticeMessage" placeholder="Type your announcement here... (e.g. We are closed for the holidays! 🎄)" class="input resize-none h-24 mb-2 shadow-inner border-slate-600 focus:border-blue-500"></textarea>
+          <textarea id="noticeMessage" placeholder="Free delivery on orders over Rs. 5000!&#10;We are closed on Poya Days.&#10;Special discounts this Christmas!" class="input resize-none h-36 mb-2 shadow-inner border-slate-600 focus:border-blue-500 leading-relaxed"></textarea>
           
           <div class="flex items-center justify-between bg-slate-800/50 p-4 rounded-xl border border-slate-700">
             <span class="font-bold text-slate-300">Enable Announcement Bar</span>
@@ -238,7 +244,7 @@
           
           <button onclick="saveAnnouncement()" class="btn-primary flex items-center justify-center gap-2 mt-4 px-8 py-3" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
-             Save Announcement
+             Save Announcements
           </button>
         </div>
       </div>
@@ -376,6 +382,7 @@
             sprite.scale.set(scale, scale, 1);
 
             sprite.userData = {
+                // If fall is true, speedY will be negative (falling down)
                 speedY: fall ? -(Math.random() * 0.015 + 0.01) : (Math.random() * 0.015 + 0.005),
                 sinSpeed: Math.random() * 0.02 + 0.01,
                 sinOffset: Math.random() * Math.PI * 2,
@@ -484,7 +491,7 @@
       window.scrollTo(0,0);
     };
 
-    // --- THEME & SETTINGS LOGIC ---
+    // --- THEME LOGIC ---
     const themeConfig = {
       default: { c1: '#ef4444', c2: '#dc2626', badge: 'rgba(239,68,68,0.2)', text: '#f87171', emojis: ['🐶', '🐱', '🐾', '🦴'], fall: false },
       avurudu: { c1: '#f97316', c2: '#eab308', badge: 'rgba(249,115,22,0.2)', text: '#fbbf24', emojis: ['🌞', '🥮', '🥨', '🍩', '🐶', '🐱'], fall: true },
@@ -502,14 +509,15 @@
     };
 
     window.saveAnnouncement = async () => {
-      const msg = document.getElementById('noticeMessage').value.trim();
+      const msgRaw = document.getElementById('noticeMessage').value;
+      const notices = msgRaw.split('\n').map(n => n.trim()).filter(n => n.length > 0);
       const isActive = document.getElementById('noticeActive').checked;
       try {
-        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'global'), { notice: msg, showNotice: isActive }, { merge: true });
-        alert("Store announcement updated successfully!");
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'global'), { notices: notices, showNotice: isActive }, { merge: true });
+        alert("Store announcements updated successfully!");
       } catch (error) {
         console.error(error);
-        alert("Failed to save announcement.");
+        alert("Failed to save announcements.");
       }
     };
 
@@ -649,7 +657,7 @@
         list.innerHTML += `
           <div class="flex items-center justify-between bg-slate-800/40 p-3 md:p-4 rounded-xl border border-slate-700/50 hover:border-slate-500 transition group gap-3">
             <div class="flex items-center gap-3 overflow-hidden flex-grow">
-              <img src="${p.image}" class="w-14 h-14 md:w-16 md:h-16 shrink-0 object-cover rounded-lg border border-slate-600 transition shadow-md">
+              <img src="${p.image}" class="w-14 h-14 md:w-16 md:h-16 shrink-0 object-contain bg-white p-1 rounded-lg border border-slate-600 transition shadow-md">
               <div class="flex flex-col min-w-0">
                 <p class="font-bold text-white text-sm md:text-base truncate pr-2">${p.name}</p>
                 <div class="flex items-center gap-2 mt-1 flex-wrap">
@@ -673,7 +681,12 @@
             if(snap.exists()) {
                 const data = snap.data();
                 applyAdminTheme(data.theme || 'default');
-                document.getElementById('noticeMessage').value = data.notice || '';
+                
+                let noticesText = "";
+                if(data.notices && data.notices.length > 0) noticesText = data.notices.join('\n');
+                else if(data.notice) noticesText = data.notice; // Backwards compatibility
+                
+                document.getElementById('noticeMessage').value = noticesText;
                 document.getElementById('noticeActive').checked = !!data.showNotice;
             } else {
                 applyAdminTheme('default');
