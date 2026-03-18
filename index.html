@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Growthwell | Premium Pet Care</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Outfit', sans-serif; background-color: #0f172a; color: #e2e8f0; margin: 0; overflow-x: hidden; }
+    #bg-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
+    
+    .glass-nav { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+    .glass-card { background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    
+    .input { width: 100%; padding: 14px 20px; margin-bottom: 16px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(15, 23, 42, 0.6); color: white; transition: all 0.3s; }
+    .input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25); background: rgba(15, 23, 42, 0.9); }
+    
+    .btn-gradient { background: linear-gradient(135deg, #3b82f6, #6366f1); color: white; padding: 12px 24px; border-radius: 9999px; font-weight: 700; cursor: pointer; text-align: center; display: inline-block; transition: all 0.3s; border: none; }
+    .btn-gradient:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.5); }
+    .btn-gradient:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+    
+    .view-section { display: none; animation: fadeIn 0.4s ease-out; }
+    .active-view { display: block; }
+    
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    
+    /* Cart Badge */
+    .cart-badge { position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.5); }
+    
+    /* Category Pill */
+    .cat-pill { padding: 8px 20px; border-radius: 9999px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.1); background: rgba(30, 41, 59, 0.8); color: #94a3b8; white-space: nowrap; }
+    .cat-pill.active { background: #3b82f6; color: white; border-color: #3b82f6; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
+    .cat-pill:hover:not(.active) { background: rgba(255,255,255,0.1); color: white; }
+
+    /* Hide scrollbar for category pills wrapper */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- 3D Background -->
+  <div id="bg-canvas"></div>
+
+  <!-- ================= MAIN LAYOUT ================= -->
+  <div id="mainLayout" class="view-section active-view flex-grow flex flex-col z-10 relative">
+    
+    <!-- Header -->
+    <header class="glass-nav sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3 cursor-pointer group" onclick="window.showMainView('home')">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-blue-500/30 group-hover:rotate-12 transition-transform">G</div>
+          <h1 class="text-2xl font-extrabold text-white tracking-tight">Growthwell</h1>
+        </div>
+        
+        <div class="flex items-center gap-6">
+          <div class="hidden md:flex items-center gap-8">
+            <button onclick="window.showMainView('home')" class="text-sm font-bold text-slate-300 hover:text-white transition">Home</button>
+            <button onclick="window.showMainView('orders')" class="text-sm font-bold text-slate-300 hover:text-white transition">My Orders</button>
+          </div>
+          
+          <!-- Cart Button -->
+          <button onclick="window.showMainView('cart')" class="relative p-2 text-slate-300 hover:text-white transition bg-slate-800/50 rounded-full border border-slate-700 hover:border-slate-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <span id="cartCount" class="cart-badge hidden">0</span>
+          </button>
+          
+          <!-- Mobile menu toggle -->
+          <button class="md:hidden text-white text-2xl focus:outline-none" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">☰</button>
+        </div>
+      </div>
+      
+      <!-- Mobile Menu -->
+      <div id="mobileMenu" class="hidden md:hidden glass-nav border-t border-slate-700/50 px-6 py-4 space-y-4 absolute w-full left-0">
+        <button onclick="window.showMainView('home'); this.parentElement.classList.add('hidden')" class="w-full text-left font-bold text-slate-200 text-lg">Home</button>
+        <button onclick="window.showMainView('orders'); this.parentElement.classList.add('hidden')" class="w-full text-left font-bold text-slate-200 text-lg">My Orders</button>
+      </div>
+    </header>
+
+    <!-- VIEWS -->
+    <div class="flex-grow">
+      
+      <!-- 1. HOME VIEW (Products) -->
+      <section id="view-home" class="view-content active-view">
+        
+        <!-- Hero Section -->
+        <div class="relative pt-20 pb-16 px-6 text-center max-w-4xl mx-auto">
+          <h2 class="text-5xl md:text-6xl font-extrabold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Premium Care for Your Best Friend</h2>
+          <p class="text-slate-400 text-lg md:text-xl font-light mb-10 max-w-2xl mx-auto">Discover top-tier nutrition, vitamins, and essentials curated specially for the wellbeing of your pets.</p>
+          
+          <!-- Search Bar -->
+          <div class="relative max-w-2xl mx-auto group">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <svg class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            </div>
+            <input type="text" id="storeSearch" placeholder="Search for food, vitamins, toys..." class="w-full bg-slate-800/80 backdrop-blur-md border-2 border-slate-700 focus:border-blue-500 rounded-full py-4 pl-12 pr-6 text-white text-lg placeholder-slate-500 transition-all shadow-2xl focus:shadow-blue-500/20 outline-none" oninput="renderStoreProducts()">
+          </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="max-w-7xl mx-auto px-6 mb-10">
+          <div class="flex overflow-x-auto gap-3 pb-4 no-scrollbar items-center justify-start md:justify-center" id="categoryFilters">
+            <button class="cat-pill active" onclick="setFilter('All', this)">All Pets</button>
+            <button class="cat-pill" onclick="setFilter('Dog', this)">Dogs 🐶</button>
+            <button class="cat-pill" onclick="setFilter('Cat', this)">Cats 🐱</button>
+            <button class="cat-pill" onclick="setFilter('Bird', this)">Birds 🦜</button>
+            <button class="cat-pill" onclick="setFilter('Fish', this)">Fish 🐠</button>
+            <button class="cat-pill" onclick="setFilter('Small Pet', this)">Small Pets 🐹</button>
+          </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="max-w-7xl mx-auto px-6 pb-20">
+          <div id="productList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            <p class="col-span-full text-center text-slate-500 py-10 font-medium">Loading premium products...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. CART VIEW -->
+      <section id="view-cart" class="view-content hidden max-w-4xl mx-auto px-6 py-12">
+        <div class="flex items-center justify-between mb-8">
+          <h2 class="text-3xl font-extrabold text-white">Your Cart</h2>
+          <button onclick="window.showMainView('home')" class="text-blue-400 hover:text-blue-300 font-semibold flex items-center gap-2">
+            <span>&larr;</span> Continue Shopping
+          </button>
+        </div>
+        
+        <div class="glass-card rounded-3xl p-6 md:p-8 shadow-2xl">
+          <div id="cartItemsList" class="space-y-6 mb-8">
+            <div class="text-center py-16">
+              <div class="text-6xl mb-6 opacity-50">🛒</div>
+              <p class="text-slate-400 text-lg">Your cart is empty.</p>
+            </div>
+          </div>
+          
+          <div class="border-t border-slate-700/50 pt-6 flex justify-between items-end">
+            <span class="text-lg font-medium text-slate-400">Total Amount</span>
+            <span class="text-4xl font-black text-white" id="cartTotalDisplay">Rs. 0.00</span>
+          </div>
+          
+          <div class="mt-8">
+            <button onclick="window.proceedToCheckout()" class="w-full btn-gradient py-4 text-xl shadow-blue-500/20" id="checkoutBtnMain" disabled>Proceed to Checkout</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. CHECKOUT VIEW -->
+      <section id="view-checkout" class="view-content hidden max-w-xl mx-auto px-6 py-12">
+        <button onclick="window.showMainView('cart')" class="text-slate-400 hover:text-white mb-6 flex items-center gap-2 font-semibold transition">
+          <span>&larr;</span> Back to Cart
+        </button>
+        
+        <div class="glass-card rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+          <!-- Decorative blur element -->
+          <div class="absolute -top-20 -right-20 w-40 h-40 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+          
+          <h2 class="text-2xl font-extrabold text-white mb-6">Delivery Details</h2>
+          
+          <div class="space-y-4 relative z-10">
+            <div>
+              <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Full Name</label>
+              <input id="chkName" placeholder="John Doe" class="input m-0">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Phone Number (WhatsApp)</label>
+              <input id="chkPhone" placeholder="+94 77 XXX XXXX" class="input m-0">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Delivery Address</label>
+              <textarea id="chkAddress" placeholder="123 Street, City, ZIP" class="input m-0 resize-none h-28"></textarea>
+            </div>
+          </div>
+
+          <div class="mt-8 bg-slate-800/50 p-6 rounded-2xl border border-slate-700/50 relative z-10">
+            <div class="flex justify-between items-center mb-3">
+              <span class="text-slate-400 font-medium">Items Count:</span>
+              <span class="font-bold text-white bg-slate-700 px-3 py-1 rounded-full" id="chkItemCount">0</span>
+            </div>
+            <div class="flex justify-between items-center text-xl mt-4 border-t border-slate-700 pt-4">
+              <span class="font-bold text-slate-300">Total to Pay:</span>
+              <span class="font-black text-blue-400 text-2xl" id="chkTotalDisplay">Rs. 0.00</span>
+            </div>
+          </div>
+
+          <button onclick="window.placeOrderFinal()" class="w-full btn-gradient py-4 text-lg mt-8 relative z-10 flex justify-center items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            Confirm Order via Email
+          </button>
+          <p class="text-center text-xs text-slate-500 mt-4 relative z-10">You will be redirected to your email client to send the order details securely.</p>
+        </div>
+      </section>
+
+      <!-- 4. ORDERS VIEW -->
+      <section id="view-orders" class="view-content hidden max-w-5xl mx-auto px-6 py-12">
+        <h2 class="text-3xl font-extrabold text-white mb-2">Order History</h2>
+        <p class="text-slate-400 mb-8">Track your recent purchases</p>
+        
+        <div id="ordersList" class="grid sm:grid-cols-2 gap-6">
+          <div class="col-span-full glass-card p-12 text-center rounded-3xl border border-slate-700/50">
+            <p class="text-slate-400 text-lg">Fetching your orders...</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 mt-auto bg-slate-900/50 backdrop-blur-lg">
+      <div class="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center text-sm">
+        <div class="mb-4 md:mb-0 text-center md:text-left">
+          <div class="flex items-center gap-2 justify-center md:justify-start mb-2">
+             <div class="w-6 h-6 rounded bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xs">G</div>
+             <p class="font-bold text-lg text-white tracking-wide">Growthwell</p>
+          </div>
+          <p class="text-slate-500">Premium care for your best friend.</p>
+        </div>
+        <div class="text-center md:text-right text-slate-500 space-y-1">
+          <p>Email: support@growthwell.com</p>
+          <p>Phone: +94 77 123 4567</p>
+          <p class="mt-4 text-xs font-medium text-slate-600">&copy; 2026 Growthwell. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Three.js Background Script -->
+  <script>
+    const canvas = document.getElementById('bg-canvas');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    canvas.appendChild(renderer.domElement);
+
+    // Create particles connecting network
+    const particlesGeometry = new THREE.BufferGeometry();
+    const particlesCount = 500;
+    const posArray = new Float32Array(particlesCount * 3);
+
+    for(let i = 0; i < particlesCount * 3; i++) {
+        posArray[i] = (Math.random() - 0.5) * 20; // Spread wide
+    }
+
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    const material = new THREE.PointsMaterial({
+        size: 0.03,
+        color: 0x6366f1, // Indigo
+        transparent: true,
+        opacity: 0.5,
+        blending: THREE.AdditiveBlending
+    });
+
+    const particlesMesh = new THREE.Points(particlesGeometry, material);
+    scene.add(particlesMesh);
+    camera.position.z = 5;
+
+    let mouseX = 0;
+    let mouseY = 0;
+
+    document.addEventListener('mousemove', (event) => {
+        mouseX = (event.clientX / window.innerWidth) - 0.5;
+        mouseY = (event.clientY / window.innerHeight) - 0.5;
+    });
+
+    const clock = new THREE.Clock();
+
+    function animate() {
+        requestAnimationFrame(animate);
+        const elapsedTime = clock.getElapsedTime();
+        
+        particlesMesh.rotation.y = elapsedTime * 0.03;
+        particlesMesh.rotation.x = elapsedTime * 0.01;
+        
+        // Follow mouse slowly
+        particlesMesh.position.x += (mouseX * 1 - particlesMesh.position.x) * 0.05;
+        particlesMesh.position.y += (-mouseY * 1 - particlesMesh.position.y) * 0.05;
+
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, addDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDRYR3XxiopH0Nh1iJPC55k7i2fBhB8dzg",
+      authDomain: "growthwell-513dd.firebaseapp.com",
+      projectId: "growthwell-513dd",
+      storageBucket: "growthwell-513dd.firebasestorage.app",
+      messagingSenderId: "379185657443",
+      appId: "1:379185657443:web:0009cfb5dd19775f0eea56"
+    };
+    
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'growthwell-shop';
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUserDoc = null;
+    let authUser = null;
+    
+    let cart = [];
+    let allStoreProducts = [];
+    let currentCategoryFilter = 'All';
+
+    // --- Authentication Flow ---
+    signInAnonymously(auth).catch(e => console.error("Auth init failed:", e));
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        authUser = user;
+        const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', user.uid);
+        const userSnap = await getDoc(userRef);
+        
+        if (userSnap.exists()) {
+          currentUserDoc = userSnap.data();
+        } else {
+          currentUserDoc = { uid: user.uid, firstName: "", phone: "", isGuest: true };
+          await setDoc(userRef, currentUserDoc);
+        }
+        window.showMainView('home');
+      }
+    });
+
+    // --- UI View Management ---
+    window.showMainView = (viewId) => {
+      document.querySelectorAll('.view-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById('view-' + viewId).classList.remove('hidden');
+      window.scrollTo(0,0);
+      
+      if(viewId === 'home') loadProductsFromDB();
+      if(viewId === 'orders') loadOrders();
+      if(viewId === 'cart') renderCartUI();
+    };
+
+    // --- Filter Logic ---
+    window.setFilter = (category, btnElement) => {
+      currentCategoryFilter = category;
+      document.querySelectorAll('.cat-pill').forEach(el => el.classList.remove('active'));
+      btnElement.classList.add('active');
+      window.renderStoreProducts();
+    };
+
+    // --- Data Fetching ---
+    async function loadProductsFromDB() {
+      if(!authUser) return;
+      const q = collection(db, 'artifacts', appId, 'public', 'data', 'products');
+      
+      onSnapshot(q, (snap) => {
+        allStoreProducts = [];
+        snap.forEach(doc => {
+          allStoreProducts.push({ id: doc.id, ...doc.data() });
+        });
+        // Sort by creation desc
+        allStoreProducts.sort((a,b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+        window.renderStoreProducts();
+      }, (error) => {
+          console.error("Error fetching products:", error);
+          document.getElementById("productList").innerHTML = "<p class='col-span-full text-center text-red-400'>Error loading inventory.</p>";
+      });
+    }
+
+    window.renderStoreProducts = () => {
+      const list = document.getElementById("productList");
+      const searchTerm = document.getElementById('storeSearch').value.toLowerCase();
+      
+      list.innerHTML = "";
+      
+      let filtered = allStoreProducts.filter(p => {
+         const matchSearch = p.name.toLowerCase().includes(searchTerm) || (p.keywords && p.keywords.some(k => k.includes(searchTerm)));
+         const matchType = currentCategoryFilter === 'All' || p.type === currentCategoryFilter;
+         return matchSearch && matchType;
+      });
+
+      if(filtered.length === 0) { 
+          list.innerHTML = `<div class="col-span-full text-center py-20"><div class="text-5xl mb-4 opacity-50">🔍</div><p class="text-slate-400 text-lg">No products found matching your search.</p></div>`; 
+          return; 
+      }
+      
+      filtered.forEach(p => {
+        let typeBadge = p.type ? `<span class="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-md text-slate-200 text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border border-slate-700/50">${p.type}</span>` : '';
+        
+        list.innerHTML += `
+          <div class="glass-card rounded-3xl hover:-translate-y-2 transition-all duration-300 overflow-hidden flex flex-col h-full group hover:shadow-blue-500/10 hover:shadow-2xl hover:border-slate-600">
+            <div class="h-56 relative overflow-hidden bg-slate-800">
+              <img src="${p.image || 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=400&q=80'}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+              ${typeBadge}
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-80"></div>
+            </div>
+            <div class="p-6 flex flex-col flex-grow relative -mt-4 bg-slate-800/60 rounded-t-2xl backdrop-blur-md">
+              <h4 class="font-extrabold text-xl text-white line-clamp-2 mb-2 group-hover:text-blue-400 transition-colors">${p.name}</h4>
+              <p class="text-sm text-slate-400 mb-6 line-clamp-2 flex-grow">${p.description || ''}</p>
+              <div class="mt-auto flex items-center justify-between">
+                <p class="text-white font-black text-2xl">Rs. ${parseFloat(p.price).toFixed(2)}</p>
+                <button onclick='window.addToCart(${JSON.stringify(p)})' class="bg-blue-600 hover:bg-blue-500 text-white p-3.5 rounded-2xl transition shadow-lg shadow-blue-500/30 hover:scale-105 active:scale-95" title="Add to Cart">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                </button>
+              </div>
+            </div>
+          </div>`;
+      });
+    };
+
+    // --- CART LOGIC ---
+    window.addToCart = (prod) => {
+      const existing = cart.find(item => item.id === prod.id);
+      if(existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({...prod, qty: 1});
+      }
+      updateCartBadge();
+      
+      // Toast notification
+      const toast = document.createElement('div');
+      toast.className = 'fixed bottom-8 right-8 bg-slate-800 border border-slate-700 text-white px-6 py-4 rounded-2xl shadow-2xl shadow-blue-500/20 z-50 flex items-center gap-3 transform transition-all duration-300 translate-y-10 opacity-0';
+      toast.innerHTML = `<div class="w-8 h-8 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center font-bold">✓</div> <div><p class="font-bold text-sm">${prod.name}</p><p class="text-xs text-slate-400">Added to your cart</p></div>`;
+      document.body.appendChild(toast);
+      
+      // Animate in
+      setTimeout(() => toast.classList.remove('translate-y-10', 'opacity-0'), 10);
+      // Animate out
+      setTimeout(() => { toast.classList.add('opacity-0', 'translate-y-10'); setTimeout(() => toast.remove(), 300); }, 3000);
+    };
+
+    function updateCartBadge() {
+      const count = cart.reduce((acc, item) => acc + item.qty, 0);
+      const badge = document.getElementById('cartCount');
+      badge.innerText = count;
+      if(count > 0) {
+        badge.classList.remove('hidden');
+        badge.classList.add('animate-bounce');
+        setTimeout(()=> badge.classList.remove('animate-bounce'), 1000);
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    window.updateQty = (id, change) => {
+      const index = cart.findIndex(item => item.id === id);
+      if(index !== -1) {
+        cart[index].qty += change;
+        if(cart[index].qty <= 0) cart.splice(index, 1);
+        updateCartBadge();
+        renderCartUI();
+      }
+    };
+
+    window.removeFromCart = (id) => {
+      cart = cart.filter(item => item.id !== id);
+      updateCartBadge();
+      renderCartUI();
+    };
+
+    function renderCartUI() {
+      const list = document.getElementById("cartItemsList");
+      let total = 0;
+      
+      if(cart.length === 0) {
+        list.innerHTML = `<div class="text-center py-16"><div class="text-6xl mb-6 opacity-30 grayscale filter">🛍️</div><p class="text-slate-400 text-lg">Your cart is feeling light.</p><button onclick="window.showMainView('home')" class="mt-6 text-blue-400 font-bold hover:underline">Go discover products</button></div>`;
+        document.getElementById("cartTotalDisplay").innerText = "Rs. 0.00";
+        document.getElementById("checkoutBtnMain").disabled = true;
+        return;
+      }
+
+      document.getElementById("checkoutBtnMain").disabled = false;
+      list.innerHTML = "";
+      
+      cart.forEach(item => {
+        total += (item.price * item.qty);
+        list.innerHTML += `
+          <div class="flex items-center gap-4 bg-slate-800/40 p-4 rounded-2xl border border-slate-700/50 hover:border-slate-600 transition">
+            <img src="${item.image}" class="w-24 h-24 object-cover rounded-xl border border-slate-700">
+            <div class="flex-grow">
+              <h4 class="font-bold text-white text-lg leading-tight mb-1">${item.name}</h4>
+              <p class="text-blue-400 font-bold">Rs. ${parseFloat(item.price).toFixed(2)}</p>
+            </div>
+            <div class="flex items-center bg-slate-900 rounded-xl border border-slate-700 overflow-hidden">
+              <button onclick="window.updateQty('${item.id}', -1)" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition">-</button>
+              <span class="w-10 text-center font-bold text-white">${item.qty}</span>
+              <button onclick="window.updateQty('${item.id}', 1)" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition">+</button>
+            </div>
+            <button onclick="window.removeFromCart('${item.id}')" class="p-3 text-red-400 hover:text-white hover:bg-red-500 rounded-xl transition ml-2 bg-red-500/10 border border-red-500/20">
+               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+            </button>
+          </div>
+        `;
+      });
+      
+      const formatTotal = `Rs. ${total.toFixed(2)}`;
+      document.getElementById("cartTotalDisplay").innerText = formatTotal;
+      document.getElementById("chkTotalDisplay").innerText = formatTotal;
+      document.getElementById("chkItemCount").innerText = cart.reduce((a,b)=>a+b.qty,0);
+      
+      if(currentUserDoc) {
+        document.getElementById("chkName").value = currentUserDoc.firstName || '';
+        document.getElementById("chkPhone").value = currentUserDoc.phone || '';
+      }
+    }
+
+    window.proceedToCheckout = () => { window.showMainView('checkout'); };
+
+    // --- PLACE ORDER & SEND EMAIL ---
+    window.placeOrderFinal = async () => {
+      const name = document.getElementById("chkName").value.trim();
+      const phone = document.getElementById("chkPhone").value.trim();
+      const address = document.getElementById("chkAddress").value.trim();
+
+      if(!name || !phone || !address) return alert("Please fill in all delivery details.");
+
+      let total = 0; let orderItemsText = ""; let orderItemsDB = [];
+      cart.forEach(item => {
+        total += (item.price * item.qty);
+        orderItemsText += `- ${item.name} (x${item.qty}) = Rs.${(item.price * item.qty).toFixed(2)}\n`;
+        orderItemsDB.push({ id: item.id, name: item.name, price: item.price, qty: item.qty });
+      });
+
+      const orderId = "ORD-" + Math.random().toString(36).substr(2, 6).toUpperCase();
+      const dateStr = new Date().toLocaleString();
+
+      const emailSubject = `New Growthwell Order: ${orderId}`;
+      const emailBody = `Growthwell System,\n\nA new order has been placed.\n\nOrder ID: ${orderId}\nDate: ${dateStr}\n\n-- CUSTOMER DETAILS --\nName: ${name}\nPhone: ${phone}\nAddress: ${address}\n\n-- ITEMS --\n${orderItemsText}\nTotal Amount: Rs.${total.toFixed(2)}\n\nThank you!`;
+
+      try {
+        const orderData = { orderId, customerName: name, customerPhone: phone, customerAddress: address, customerUid: authUser ? authUser.uid : "guest", items: orderItemsDB, totalAmount: total, status: "Pending", createdAt: dateStr };
+        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'orders'), orderData);
+        
+        if(authUser && currentUserDoc) {
+           await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', authUser.uid), { firstName: name, phone: phone });
+           currentUserDoc.firstName = name; currentUserDoc.phone = phone;
+        }
+
+        cart = []; updateCartBadge();
+        
+        const mailtoLink = `mailto:yaso@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+        window.open(mailtoLink, '_blank');
+
+        alert("Order placed successfully! Redirecting to email client...");
+        window.showMainView('orders');
+
+      } catch (error) { console.error("Order error:", error); alert("Error processing your order."); }
+    };
+
+    async function loadOrders() {
+      if(!authUser) return;
+      const list = document.getElementById("ordersList");
+      const uidToSearch = authUser.uid;
+      
+      const q = collection(db, 'artifacts', appId, 'public', 'data', 'orders');
+      onSnapshot(q, (snap) => {
+        list.innerHTML = "";
+        let hasOrders = false;
+        
+        let localOrders = [];
+        snap.forEach(d => {
+          if(d.data().customerUid === uidToSearch) localOrders.push(d.data());
+        });
+        localOrders.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        if(localOrders.length === 0) {
+           list.innerHTML = `<div class="col-span-full glass-card p-16 rounded-3xl text-center border border-slate-700/50"><p class="text-slate-400 text-lg mb-4">You haven't placed any orders yet.</p><button onclick="window.showMainView('home')" class="btn-gradient">Start Shopping</button></div>`;
+           return;
+        }
+
+        localOrders.forEach(o => {
+          let isPending = o.status === 'Pending';
+          let statusColor = isPending ? "bg-amber-500/20 text-amber-400 border-amber-500/30" : "bg-emerald-500/20 text-emerald-400 border-emerald-500/30";
+          let itemsHtml = o.items.map(i => `<li class="text-sm text-slate-300 py-1 flex justify-between"><span>${i.name} <span class="text-slate-500 mx-1">x</span> <span class="font-bold text-white">${i.qty}</span></span></li>`).join('');
+          
+          list.innerHTML += `
+            <div class="glass-card p-6 md:p-8 rounded-3xl border border-slate-700/50 hover:border-slate-500 transition shadow-xl">
+              <div class="flex justify-between items-start mb-6">
+                <div>
+                  <span class="text-xs text-slate-400 block mb-1 font-mono">${o.createdAt}</span>
+                  <span class="font-black text-white text-xl">#${o.orderId}</span>
+                </div>
+                <span class="text-xs px-3 py-1.5 rounded-full font-bold border uppercase tracking-widest ${statusColor}">${o.status}</span>
+              </div>
+              <div class="border-t border-b border-slate-700/50 py-4 mb-4">
+                <ul class="divide-y divide-slate-800">${itemsHtml}</ul>
+              </div>
+              <div class="flex justify-between items-end">
+                <span class="text-sm font-semibold text-slate-400 uppercase tracking-widest">Total</span>
+                <span class="font-black text-blue-400 text-2xl">Rs. ${o.totalAmount.toFixed(2)}</span>
+              </div>
+            </div>`;
+        });
+      }, (error) => { console.error(error); list.innerHTML = "<p class='col-span-full text-center text-red-500'>Error loading orders.</p>"; });
+    }
+  </script>
+</body>
+</html>
