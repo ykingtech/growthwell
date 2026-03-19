@@ -98,6 +98,12 @@
     }
     .animate-marquee { display: inline-block; white-space: nowrap; animation: marquee 15s linear infinite; }
 
+    @keyframes float-img {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-4px); }
+    }
+    .animate-float { animation: float-img 3s ease-in-out infinite; }
+
     .cart-badge { position: absolute; top: -6px; right: -6px; background: white; color: var(--theme-from); border: 2px solid var(--theme-from); border-radius: 50%; width: 22px; height: 22px; font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: 900; box-shadow: 0 4px 10px var(--theme-bg-glow); }
     
     .cat-pill { padding: 8px 20px; border-radius: 9999px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.3); background: rgba(255, 255, 255, 0.9); color: #475569; white-space: nowrap; box-shadow: 0 4px 15px rgba(0,0,0,0.1); backdrop-filter: blur(10px); }
@@ -138,19 +144,19 @@
             <div id="dec-christmas" class="hidden absolute inset-0 z-20 pointer-events-none">
               <div class="absolute -top-4 -left-3 text-3xl transform -rotate-12 drop-shadow-md">🎅</div>
               <div class="absolute -top-3 -right-3 text-3xl animate-tree">🎄</div>
-              <img src="pngwing.com.png" alt="Christmas" class="absolute -bottom-7 -right-8 w-11 h-11 object-contain bg-white/95 rounded-full shadow-xl border border-blue-400/50 p-1 animate-swing">
+              <img src="pngwing.com.jpg" alt="Christmas" class="absolute -bottom-7 -right-8 w-11 h-11 object-contain bg-white/95 rounded-full shadow-xl border border-blue-400/50 p-1 animate-swing" onerror="this.style.display='none'">
             </div>
             
             <div id="dec-vesak" class="hidden absolute inset-0 z-20 pointer-events-none">
               <div class="absolute -top-2 -right-6 text-3xl animate-holy"></div>
               <div class="absolute -bottom-6 -right-4 text-3xl animate-swing">🏮</div>
-              <img src="pngwing.com (2).png" alt="Vesak" class="absolute -bottom-7 -left-4 w-11 h-11 object-contain bg-white/95 rounded-full shadow-xl border border-amber-400/50 p-1 animate-holy">
+              <img src="pngwing.com (2).jpg" alt="Vesak" class="absolute -bottom-7 -left-4 w-11 h-11 object-contain bg-white/95 rounded-full shadow-xl border border-amber-400/50 p-1 animate-holy" onerror="this.style.display='none'">
             </div>
             
             <div id="dec-avurudu" class="hidden absolute inset-0 z-20 pointer-events-none">
               <div class="absolute -top-4 -left-3 text-3xl animate-beat">🪘</div>
               <div class="absolute top-2 left-1/2 text-3xl drop-shadow-md"><span class="animate-fly"></span></div>
-              <img src="pngwing.com (41).png" alt="Avurudu" class="absolute -bottom-16 -right-8 w-25 h-auto object-contain bg-white/95 rounded-lg shadow-xl border border-orange-400/50 p-1 animate-float">
+              <img src="pngwing.com (41).jpg" alt="Avurudu" class="absolute -bottom-16 -right-8 w-25 h-auto object-contain bg-white/95 rounded-lg shadow-xl border border-orange-400/50 p-1 animate-float" onerror="this.style.display='none'">
             </div>
           </div>
         </div>
@@ -286,9 +292,19 @@
             </div>
           </div>
           
-          <div class="border-t border-slate-200/60 pt-6 flex justify-between items-end bg-slate-50/60 backdrop-blur-md -mx-6 md:-mx-8 -mb-6 md:-mb-8 p-6 md:p-8 rounded-b-3xl">
-            <span class="text-lg font-bold text-slate-500">Total Amount</span>
-            <span class="text-4xl font-black drop-shadow-sm" style="color: var(--theme-text);" id="cartTotalDisplay">Rs. 0.00</span>
+          <div class="border-t border-slate-200/60 pt-6 flex flex-col gap-2 bg-slate-50/60 backdrop-blur-md -mx-6 md:-mx-8 -mb-6 md:-mb-8 p-6 md:p-8 rounded-b-3xl">
+            <div class="flex justify-between items-center w-full">
+               <span class="text-md font-bold text-slate-500">Subtotal</span>
+               <span class="text-xl font-bold text-slate-700" id="cartSubtotalDisplay">Rs. 0.00</span>
+            </div>
+            <div class="flex justify-between items-center w-full border-b border-slate-200 pb-4 mb-1">
+               <span class="text-md font-bold text-slate-500">Courier Charge</span>
+               <span class="text-xl font-bold text-slate-700" id="cartDeliveryDisplay">Rs. 300.00</span>
+            </div>
+            <div class="flex justify-between items-end w-full pt-2">
+              <span class="text-lg font-bold text-slate-500">Grand Total</span>
+              <span class="text-4xl font-black drop-shadow-sm" style="color: var(--theme-text);" id="cartTotalDisplay">Rs. 0.00</span>
+            </div>
           </div>
           
           <div class="mt-12">
@@ -327,6 +343,10 @@
             <div class="flex justify-between items-center mb-3">
               <span class="text-slate-500 font-semibold">Items Count:</span>
               <span class="font-bold text-slate-700 bg-white border border-slate-200 px-3 py-1 rounded-full shadow-sm" id="chkItemCount">0</span>
+            </div>
+            <div class="flex justify-between items-center mb-3">
+              <span class="text-slate-500 font-semibold">Courier Charge:</span>
+              <span class="font-bold text-slate-700 bg-amber-100 text-amber-700 border border-amber-200 px-3 py-1 rounded-full shadow-sm">Rs. 300.00</span>
             </div>
             <div class="flex justify-between items-center text-xl mt-4 border-t border-slate-200 pt-4">
               <span class="font-bold text-slate-700">Total to Pay:</span>
@@ -833,10 +853,12 @@
 
     function renderCartUI() {
       const list = document.getElementById("cartItemsList");
-      let total = 0;
+      let subtotal = 0;
+      const DELIVERY_FEE = 300;
       
       if(cart.length === 0) {
         list.innerHTML = `<div class="text-center py-16"><div class="text-7xl mb-6 opacity-30 grayscale filter drop-shadow-sm">🛍️</div><p class="text-slate-500 text-lg font-medium">Your cart is feeling light.</p><button onclick="window.showMainView('home')" class="mt-6 font-bold hover:underline" style="color: var(--theme-text);">Go discover products</button></div>`;
+        document.getElementById("cartSubtotalDisplay").innerText = "Rs. 0.00";
         document.getElementById("cartTotalDisplay").innerText = "Rs. 0.00";
         document.getElementById("checkoutBtnMain").disabled = true;
         return;
@@ -846,7 +868,7 @@
       list.innerHTML = "";
       
       cart.forEach(item => {
-        total += (item.price * item.qty);
+        subtotal += (item.price * item.qty);
         list.innerHTML += `
           <div class="flex items-center gap-4 bg-white/80 p-4 rounded-2xl border border-slate-200 transition" onmouseover="this.style.borderColor='var(--theme-from)'" onmouseout="this.style.borderColor='#e2e8f0'">
             <img src="${item.image}" class="w-24 h-24 object-contain bg-white p-2 rounded-xl border border-slate-100">
@@ -866,8 +888,11 @@
         `;
       });
       
-      document.getElementById("cartTotalDisplay").innerText = `Rs. ${total.toFixed(2)}`;
-      document.getElementById("chkTotalDisplay").innerText = `Rs. ${total.toFixed(2)}`;
+      let grandTotal = subtotal + DELIVERY_FEE;
+
+      document.getElementById("cartSubtotalDisplay").innerText = `Rs. ${subtotal.toFixed(2)}`;
+      document.getElementById("cartTotalDisplay").innerText = `Rs. ${grandTotal.toFixed(2)}`;
+      document.getElementById("chkTotalDisplay").innerText = `Rs. ${grandTotal.toFixed(2)}`;
       document.getElementById("chkItemCount").innerText = cart.reduce((a,b)=>a+b.qty,0);
       
       if(currentUserDoc) {
@@ -886,18 +911,44 @@
 
       if(!name || !phone || !address) return alert("Please fill in all delivery details.");
 
-      let total = 0; let orderItemsText = ""; let orderItemsDB = [];
+      let subtotal = 0; 
+      const DELIVERY_FEE = 300;
+      let orderItemsText = ""; 
+      let orderItemsDB = [];
+      
       cart.forEach(item => {
-        total += (item.price * item.qty);
-        orderItemsText += `- ${item.name} (x${item.qty}) = Rs.${(item.price * item.qty).toFixed(2)}\n`;
+        subtotal += (item.price * item.qty);
+        orderItemsText += `🐾 ${item.name} (x${item.qty}) = Rs.${(item.price * item.qty).toFixed(2)}\n`;
         orderItemsDB.push({ id: item.id, name: item.name, price: item.price, qty: item.qty });
       });
 
+      let total = subtotal + DELIVERY_FEE;
       const orderId = "ORD-" + Math.random().toString(36).substr(2, 6).toUpperCase();
       const dateStr = new Date().toLocaleString();
 
-      const emailSubject = `New Growthwell Order: ${orderId}`;
-      const emailBody = `Growthwell System,\n\nA new order has been placed.\n\nOrder ID: ${orderId}\nDate: ${dateStr}\n\n-- CUSTOMER DETAILS --\nName: ${name}\nPhone: ${phone}\nAddress: ${address}\n\n-- ITEMS --\n${orderItemsText}\nTotal Amount: Rs.${total.toFixed(2)}\n\nThank you!`;
+      const emailSubject = `🌟 New Order Received! | ID: ${orderId} 🌟`;
+      const emailBody = `
+🎉 A NEW ORDER HAS ARRIVED! 🎉
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📦 ORDER SUMMARY
+🛒 Order ID     : ${orderId}
+📅 Date & Time  : ${dateStr}
+
+👤 CUSTOMER DETAILS
+📛 Name    : ${name}
+📞 Phone   : ${phone}
+📍 Address : ${address}
+
+🛍️ ITEMS ORDERED
+${orderItemsText}
+🚚 Courier Charge : Rs. 300.00
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💰 GRAND TOTAL    : Rs. ${total.toFixed(2)}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ Thank you for choosing Growthwell! Have a pawsome day! 🐾
+`;
 
       try {
         const orderData = { orderId, customerName: name, customerPhone: phone, customerAddress: address, customerUid: authUser ? authUser.uid : "guest", items: orderItemsDB, totalAmount: total, status: "Pending", createdAt: dateStr };
