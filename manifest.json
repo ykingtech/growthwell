@@ -2,7 +2,7 @@
   "name": "Growthwell Admin Portal",
   "short_name": "GW Admin",
   "description": "Admin Dashboard for Growthwell Premium Pet Care",
-  "start_url": "./just_home.html",
+  "start_url": "./admin.html",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#ef4444",
