@@ -90,7 +90,7 @@
   <div id="bg-canvas"></div>
 
   <!-- Sidebar -->
-  <aside class="w-full md:w-72 glass-panel border-b md:border-b-0 md:border-r border-slate-700/50 sticky top-0 flex flex-col z-50 shadow-lg md:shadow-2xl">
+  <aside class="w-full md:w-72 glass-panel border-b md:border-b-0 md:border-r border-slate-700/50 sticky top-0 flex flex-col z-50 shadow-lg md:shadow-2xl h-screen">
     <div class="p-4 md:p-6 flex justify-between items-center md:block">
       <div class="flex items-center gap-3">
         
@@ -98,7 +98,7 @@
         <div class="relative flex items-center">
           <img src="logo3.jpeg" alt="Growthwell" class="h-10 md:h-12 object-contain rounded-lg shadow-lg relative z-10 bg-white">
           
-          <!-- Seasonal Overlays (Emojis + Uploaded Images) -->
+          <!-- Seasonal Overlays -->
           <div id="dec-christmas" class="hidden absolute inset-0 z-20 pointer-events-none">
             <div class="absolute -top-4 -left-3 text-3xl transform -rotate-12 drop-shadow-md">🎅</div>
             <div class="absolute -top-3 -right-3 text-3xl animate-tree">🎄</div>
@@ -126,11 +126,15 @@
       <button class="md:hidden text-3xl text-slate-300 focus:outline-none p-2 rounded-lg hover:bg-slate-800/50 transition" onclick="document.getElementById('mobileNav').classList.toggle('hidden')">☰</button>
     </div>
     
-    <nav id="mobileNav" class="hidden md:flex flex-col flex-grow p-4 space-y-2 bg-slate-900/95 md:bg-transparent backdrop-blur-xl absolute md:relative w-full left-0 top-full md:top-auto border-b md:border-b-0 border-slate-700/50 shadow-2xl md:shadow-none z-50">
+    <nav id="mobileNav" class="hidden md:flex flex-col flex-grow p-4 space-y-2 bg-slate-900/95 md:bg-transparent backdrop-blur-xl absolute md:relative w-full left-0 top-full md:top-auto border-b md:border-b-0 border-slate-700/50 shadow-2xl md:shadow-none z-50 overflow-y-auto">
       <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 ml-2 mt-2">Menu</p>
       <button onclick="switchTab('products')" id="tab-products" class="tab-btn active w-full text-left px-4 py-3.5 rounded-xl transition-all flex items-center gap-3">
         <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
         Products
+      </button>
+      <button onclick="switchTab('ads')" id="tab-ads" class="tab-btn w-full text-left px-4 py-3.5 rounded-xl transition-all flex items-center gap-3">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+        Advertisements
       </button>
       <button onclick="switchTab('orders')" id="tab-orders" class="tab-btn w-full text-left px-4 py-3.5 rounded-xl transition-all flex items-center gap-3">
         <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
@@ -141,7 +145,7 @@
         Settings & Themes
       </button>
       <div class="pt-6 mt-auto border-t border-slate-700/50 md:block">
-        <a href="index.html" target="_blank" class="flex items-center justify-center gap-2 w-full text-sm font-semibold text-slate-300 hover:text-white py-3 rounded-xl bg-slate-800/50 hover:bg-slate-700/50 border border-slate-600/50 transition-all">
+        <a href="forgot_password.html" target="_blank" class="flex items-center justify-center gap-2 w-full text-sm font-semibold text-slate-300 hover:text-white py-3 rounded-xl bg-slate-800/50 hover:bg-slate-700/50 border border-slate-600/50 transition-all">
           <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
           Visit Storefront
         </a>
@@ -164,7 +168,7 @@
       <div class="grid lg:grid-cols-12 gap-6 md:gap-8">
         <!-- Add Product Form -->
         <div class="lg:col-span-4 w-full">
-          <div class="glass-panel p-5 md:p-6 rounded-2xl md:sticky top-24 border border-slate-700 shadow-xl">
+          <div class="glass-panel p-5 md:p-6 rounded-2xl md:sticky top-8 border border-slate-700 shadow-xl">
             <h3 class="font-bold text-lg text-white mb-6 flex items-center gap-2">
               <span class="p-1.5 rounded-lg" style="color: var(--theme-text); background-color: var(--theme-badge);"><svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></span>
               Add New Product
@@ -235,6 +239,75 @@
           <div class="glass-panel p-4 md:p-6 rounded-2xl shadow-2xl w-full border border-slate-700/50">
             <div id="adminProductList" class="flex flex-col gap-3">
               <div class="p-8 text-center text-slate-400">Loading inventory...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEW: ADVERTISEMENTS VIEW -->
+    <section id="view-ads" class="view-section max-w-7xl mx-auto w-full">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
+        <div>
+          <h2 class="text-2xl md:text-3xl font-bold text-white">Advertisements Slider</h2>
+          <p class="text-slate-400 text-sm mt-1">Manage banner images and promotional text overlays for the homepage</p>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-6 md:gap-8">
+        <!-- Add Ad Form -->
+        <div class="lg:col-span-4 w-full">
+          <div class="glass-panel p-5 md:p-6 rounded-2xl md:sticky top-8 border border-slate-700 shadow-xl">
+            <h3 class="font-bold text-lg text-white mb-6 flex items-center gap-2">
+              <span class="p-1.5 rounded-lg" style="color: var(--theme-text); background-color: var(--theme-badge);"><svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></span>
+              Add New Banner
+            </h3>
+            
+            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Banner Image (Wide image recommended)</label>
+            <div class="relative border-2 border-dashed border-slate-600 rounded-xl p-4 text-center hover:bg-slate-800/50 transition cursor-pointer mb-4">
+              <input type="file" id="aImageFile" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+              <div class="text-slate-400 flex flex-col items-center">
+                <svg class="w-8 h-8 mb-2 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                <span class="text-sm font-medium">Upload Banner Image</span>
+              </div>
+            </div>
+            
+            <!-- Ad Image Preview -->
+            <div id="previewAdContainer" class="hidden mb-4 relative group bg-white rounded-xl overflow-hidden">
+              <img id="imgAdPreview" class="w-full h-32 object-cover border border-slate-600">
+              <button onclick="clearAdImage()" class="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-lg opacity-100 md:opacity-0 group-hover:opacity-100 transition shadow-lg"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            </div>
+
+            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Title Text (Optional)</label>
+            <input id="aTitle" placeholder="e.g. 50% OFF All Items" class="input">
+
+            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Subtitle Text (Optional)</label>
+            <input id="aSubtitle" placeholder="e.g. Limited time offer!" class="input">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-0 sm:gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Button Text</label>
+                <input id="aBtnText" placeholder="e.g. Shop Now" class="input">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Button Link</label>
+                <input id="aBtnLink" placeholder="e.g. #view-home" class="input">
+              </div>
+            </div>
+
+            <button onclick="addAdvertisement()" class="btn-primary w-full mt-2 flex justify-center items-center gap-2" id="addAdBtn">
+              <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+              Save Banner
+            </button>
+          </div>
+        </div>
+
+        <!-- Ads List -->
+        <div class="lg:col-span-8 flex flex-col gap-6 w-full max-w-full">
+          <div class="glass-panel p-4 md:p-6 rounded-2xl shadow-2xl w-full border border-slate-700/50">
+            <h3 class="font-bold text-lg text-white mb-4">Active Banners</h3>
+            <div id="adminAdsList" class="grid sm:grid-cols-2 gap-4">
+              <div class="col-span-full p-8 text-center text-slate-400">Loading banners...</div>
             </div>
           </div>
         </div>
@@ -504,8 +577,10 @@
     const db = getFirestore(app);
 
     let compressedImageBase64 = null;
+    let compressedAdImageBase64 = null;
     let allProductsData = [];
-    window.editingProductId = null; // New state to track if we are editing
+    let allAdsData = [];
+    window.editingProductId = null;
 
     onAuthStateChanged(auth, (user) => {
       if (user) { loadData(); }
@@ -586,7 +661,7 @@
       if (themeName === 'avurudu') document.getElementById('dec-avurudu').classList.remove('hidden');
     }
 
-    // Load Image
+    // --- PRODUCT IMAGE LOGIC ---
     window.clearImage = () => {
         document.getElementById('pImageFile').value = '';
         document.getElementById('previewContainer').classList.add('hidden');
@@ -597,26 +672,18 @@
     document.getElementById('pImageFile').addEventListener('change', function(event) {
       const file = event.target.files[0];
       if (!file) return;
-
       const reader = new FileReader();
       reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
           const canvas = document.createElement('canvas');
-          const MAX_WIDTH = 600; const MAX_HEIGHT = 600;
           let width = img.width; let height = img.height;
-
-          if (width > height) {
-            if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-          } else {
-            if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
-          }
+          const MAX = 600;
+          if (width > height) { if (width > MAX) { height *= MAX / width; width = MAX; } } 
+          else { if (height > MAX) { width *= MAX / height; height = MAX; } }
           canvas.width = width; canvas.height = height;
-
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
+          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
           compressedImageBase64 = canvas.toDataURL('image/jpeg', 0.6);
-          
           document.getElementById('imgPreview').src = compressedImageBase64;
           document.getElementById('previewContainer').classList.remove('hidden');
         };
@@ -624,6 +691,79 @@
       };
       reader.readAsDataURL(file);
     });
+
+    // --- ADVERTISEMENT IMAGE LOGIC ---
+    window.clearAdImage = () => {
+        document.getElementById('aImageFile').value = '';
+        document.getElementById('previewAdContainer').classList.add('hidden');
+        document.getElementById('imgAdPreview').src = '';
+        compressedAdImageBase64 = null;
+    };
+
+    document.getElementById('aImageFile').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          let width = img.width; let height = img.height;
+          // Banners can be wider
+          const MAX_WIDTH = 1200; 
+          if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+          canvas.width = width; canvas.height = height;
+          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+          compressedAdImageBase64 = canvas.toDataURL('image/jpeg', 0.7);
+          document.getElementById('imgAdPreview').src = compressedAdImageBase64;
+          document.getElementById('previewAdContainer').classList.remove('hidden');
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    window.addAdvertisement = async () => {
+      const title = document.getElementById('aTitle').value.trim();
+      const subtitle = document.getElementById('aSubtitle').value.trim();
+      const btnText = document.getElementById('aBtnText').value.trim();
+      const btnLink = document.getElementById('aBtnLink').value.trim() || '#';
+      const image = compressedAdImageBase64;
+      const btn = document.getElementById('addAdBtn');
+
+      if(!image) return alert("Please upload a banner image first.");
+
+      btn.disabled = true;
+      btn.innerHTML = `Saving...`;
+
+      try {
+        const adData = { title, subtitle, buttonText: btnText, buttonLink: btnLink, imageBase64: image, createdAt: new Date().toISOString() };
+        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'advertisements'), adData);
+        alert("Advertisement added successfully!");
+        
+        document.getElementById('aTitle').value = '';
+        document.getElementById('aSubtitle').value = '';
+        document.getElementById('aBtnText').value = '';
+        document.getElementById('aBtnLink').value = '';
+        clearAdImage();
+        
+      } catch (e) {
+        console.error(e);
+        alert("Error saving advertisement.");
+      } finally {
+        btn.innerHTML = `<svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg> Save Banner`;
+        btn.disabled = false;
+      }
+    };
+
+    window.deleteAd = async (id) => {
+      if(confirm("Are you sure you want to permanently delete this banner?")) {
+        try {
+          await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'advertisements', id));
+        } catch(e) { console.error(e); alert("Error deleting banner!"); }
+      }
+    };
+
 
     window.addProduct = async () => {
       const name = document.getElementById('pName').value.trim();
@@ -759,6 +899,28 @@
       });
     };
 
+    window.renderAds = () => {
+      const list = document.getElementById('adminAdsList');
+      list.innerHTML = '';
+
+      if(allAdsData.length === 0) {
+        list.innerHTML = '<div class="col-span-full p-8 text-center text-slate-500">No banners found. Add one to show on storefront.</div>';
+        return;
+      }
+
+      allAdsData.forEach(ad => {
+        list.innerHTML += `
+          <div class="bg-slate-800/40 rounded-xl border border-slate-700/50 overflow-hidden relative group">
+            <img src="${ad.imageBase64}" class="w-full h-32 object-cover">
+            <div class="absolute inset-0 bg-black/60 flex flex-col justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity p-4 text-center">
+                <p class="font-bold text-white text-sm mb-1">${ad.title || '(No Title)'}</p>
+                <button onclick="deleteAd('${ad.id}')" class="mt-2 bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded text-xs font-bold shadow-lg">Delete Banner</button>
+            </div>
+          </div>
+        `;
+      });
+    };
+
     function loadData() {
         // Listen to Theme and Settings
         const settingsQuery = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'global');
@@ -777,6 +939,15 @@
                 applyAdminTheme('default');
             }
         });
+
+        // Listen to ads
+        const aQuery = collection(db, 'artifacts', appId, 'public', 'data', 'advertisements');
+        onSnapshot(aQuery, (snap) => {
+          allAdsData = [];
+          snap.forEach(d => allAdsData.push({id: d.id, ...d.data()}));
+          allAdsData.sort((a,b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
+          renderAds();
+        }, (err) => console.error(err));
 
         // Listen to products
         const pQuery = collection(db, 'artifacts', appId, 'public', 'data', 'products');
