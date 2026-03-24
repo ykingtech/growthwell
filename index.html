@@ -92,62 +92,11 @@
     }
     .animate-beat { animation: beat 0.6s ease-in-out infinite; }
 
-    @keyframes marquee {
-        0% { transform: translateX(100%); }
-        100% { transform: translateX(-100%); }
-    }
-    .animate-marquee { display: inline-block; white-space: nowrap; animation: marquee 15s linear infinite; }
-
     @keyframes float-img {
         0%, 100% { transform: translateY(0px); }
         50% { transform: translateY(-4px); }
     }
     .animate-float { animation: float-img 3s ease-in-out infinite; }
-
-    /* --- 100% BULLETPROOF Delivery Banner Animations (10s Loop) --- */
-    .anim-scooter-main { 
-        position: absolute;
-        bottom: 16px;
-        width: max-content;
-        animation: drive-across-safe 10s ease-in-out infinite; 
-        z-index: 20;
-    }
-
-    @keyframes drive-across-safe {
-      0%   { left: 150%; transform: translateX(0); } /* Start far right */
-      15%  { left: 50%; transform: translateX(-50%); } /* Stop exactly at center */
-      75%  { left: 50%; transform: translateX(-50%); } /* Wait at center */
-      80%  { left: 50%; transform: translateX(-50%) rotate(5deg); } /* Rev up */
-      90%  { left: -50%; transform: translateX(-100%) rotate(-5deg); } /* Speed away left */
-      100% { left: -50%; transform: translateX(-100%); }
-    }
-
-    .anim-idle { 
-        animation: idle-bounce 0.4s infinite alternate ease-in-out; 
-    }
-    @keyframes idle-bounce {
-      from { transform: translateY(0); }
-      to   { transform: translateY(-4px); }
-    }
-
-    .anim-boxes { 
-        animation: boxes-drop 10s infinite; 
-        transform-origin: bottom center; 
-    }
-    @keyframes boxes-drop {
-      0%, 15% { transform: translateY(-100px) scale(0.5); opacity: 0; }
-      18% { transform: translateY(10px) scale(1.1); opacity: 1; }
-      20%, 100% { transform: translateY(0) scale(1); opacity: 1; }
-    }
-
-    .anim-wind { 
-        animation: wind-blow 10s infinite; 
-    }
-    @keyframes wind-blow {
-      0%, 79% { transform: translateX(0) scale(0.5); opacity: 0; }
-      81% { transform: translateX(30px) scale(1); opacity: 1; }
-      86%, 100% { transform: translateX(80px) scale(1.5); opacity: 0; }
-    }
 
     .cart-badge { position: absolute; top: -6px; right: -6px; background: white; color: var(--theme-from); border: 2px solid var(--theme-from); border-radius: 50%; width: 22px; height: 22px; font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: 900; box-shadow: 0 4px 10px var(--theme-bg-glow); }
     
@@ -157,6 +106,9 @@
 
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    /* Carousel Styling */
+    .ad-slide { min-width: 100%; transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -236,64 +188,27 @@
     <!-- VIEWS -->
     <div class="flex-grow">
       
-      <!-- 1. HOME VIEW (Products) -->
+      <!-- 1. HOME VIEW (Products & Ads) -->
       <section id="view-home" class="view-content active-view">
         
-        <!-- Animated Delivery Banner -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-2">
-          <div class="relative w-full rounded-[2rem] overflow-hidden shadow-2xl bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 border border-blue-400/50 flex flex-col md:flex-row items-center justify-between p-6 md:p-10 min-h-[220px]">
-            <!-- Background Decorations -->
-            <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 20px 20px;"></div>
-            <div class="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-white/20 to-transparent pointer-events-none transform skew-x-12 translate-x-10"></div>
-
-            <!-- Text Content -->
-            <div class="relative z-10 w-full md:w-3/5 text-center md:text-left flex flex-col items-center md:items-start">
-              <div class="inline-flex items-center gap-2 bg-red-600 text-white px-4 py-1.5 rounded-full text-xs font-black tracking-widest uppercase mb-4 shadow-lg shadow-red-600/30 border border-red-400">
-                <span class="animate-pulse">⏱️</span> Same Day Delivery <span class="text-[10px] bg-red-800/80 px-2 py-0.5 rounded-full ml-1">Order Before 12 PM</span>
-              </div>
-              <h2 class="text-4xl md:text-5xl lg:text-6xl font-black italic tracking-tighter uppercase mb-2 text-white drop-shadow-lg" style="text-shadow: 2px 3px 0px rgba(30, 58, 138, 0.6);">
-                Need it ASAP?
-              </h2>
-              <h3 class="text-2xl md:text-3xl font-extrabold uppercase mb-5 text-blue-100 drop-shadow-md">
-                We got you covered!
-              </h3>
-              <div class="inline-flex items-center gap-2 font-bold bg-white text-blue-800 px-5 py-2.5 rounded-xl shadow-xl hover:scale-105 transition-transform cursor-default border border-blue-100">
-                Urgent Needs <span class="bg-green-500 text-white rounded-md w-6 h-6 flex items-center justify-center text-sm shadow-inner">✓</span>
-              </div>
-            </div>
-
-            <!-- Animation Container -->
-            <div class="relative w-full md:w-2/5 h-48 md:h-full mt-6 md:mt-0 overflow-hidden rounded-xl">
-               <div class="absolute bottom-4 w-full border-b-4 border-dashed border-white/30"></div> <!-- Road Line -->
-               
-               <!-- Main Scooter Animation Wrapper -->
-               <div class="anim-scooter-main">
-                  <div class="anim-idle relative flex items-end">
-                     <!-- Loading Boxes -->
-                     <div class="anim-boxes absolute bottom-12 left-0 md:-left-4 z-10 flex flex-col items-center">
-                        <div class="text-3xl md:text-4xl drop-shadow-2xl mb-[-12px] transform -rotate-12">📦</div>
-                        <div class="text-4xl md:text-5xl drop-shadow-2xl">📦</div>
-                     </div>
-                     <!-- Scooter Emoji -->
-                     <div class="text-[90px] md:text-[110px] drop-shadow-2xl leading-none" style="transform: scaleX(-1);">🛵</div>
-                     <!-- Wind Speed Lines (Flipped to point right, indicating left movement) -->
-                     <div class="anim-wind absolute top-1/2 -right-12 text-4xl opacity-0" style="transform: scaleX(-1);">💨</div>
-                  </div>
-               </div>
-            </div>
+        <!-- MAIN ADVERTISEMENT CAROUSEL (Slider) -->
+        <div id="adCarouselContainer" class="hidden relative w-full bg-slate-900 overflow-hidden shadow-2xl h-[250px] md:h-[450px]">
+          <div id="adCarouselInner" class="flex h-full w-full">
+            <!-- Ads will be injected here -->
           </div>
+          <!-- Carousel Dots -->
+          <div id="adDots" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-20"></div>
         </div>
-        <!-- End of Banner -->
 
         <!-- Hero Section -->
-        <div class="relative pt-6 md:pt-12 pb-16 px-6 text-center max-w-4xl mx-auto">
+        <div class="relative pt-12 md:pt-16 pb-12 px-6 text-center max-w-4xl mx-auto">
           <div class="inline-block mb-4 px-5 py-2 rounded-full bg-white/90 backdrop-blur-md border border-white/50 font-bold text-sm shadow-lg" style="color: var(--theme-text);">
             🐾 No.1 Pet Care Store
           </div>
-          <h2 class="text-5xl md:text-7xl font-extrabold mb-6 text-white drop-shadow-xl tracking-tight leading-tight">
+          <h2 class="text-4xl md:text-6xl font-extrabold mb-6 text-white drop-shadow-xl tracking-tight leading-tight">
             Premium Care for <br/> <span class="text-gradient drop-shadow-sm">Your Best Friend</span>
           </h2>
-          <p class="text-slate-200 text-lg md:text-xl font-medium mb-10 max-w-2xl mx-auto drop-shadow-md">
+          <p class="text-slate-200 text-lg font-medium mb-8 max-w-2xl mx-auto drop-shadow-md">
             Discover top-tier nutrition, vitamins, and essentials curated specially for the wellbeing of your pets.
           </p>
           
@@ -740,8 +655,13 @@ Trusted by pet owners and professional</p>
     let authUser = null;
     let cart = [];
     let allStoreProducts = [];
+    let allAds = [];
     let currentCategoryFilter = 'All';
     let announcementInterval = null;
+    
+    // Carousel Variables
+    let currentAdIndex = 0;
+    let adSlideInterval = null;
 
     // --- THEME LOGIC ---
     const themeConfig = {
@@ -850,7 +770,17 @@ Trusted by pet owners and professional</p>
               applySiteTheme('default');
           }
       });
+      
+      // Listen to Advertisements
+      const adsQuery = collection(db, 'artifacts', appId, 'public', 'data', 'advertisements');
+      onSnapshot(adsQuery, (snap) => {
+          allAds = [];
+          snap.forEach(doc => allAds.push({ id: doc.id, ...doc.data() }));
+          allAds.sort((a,b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
+          renderAdCarousel();
+      });
 
+      // Listen to Products
       const q = collection(db, 'artifacts', appId, 'public', 'data', 'products');
       onSnapshot(q, (snap) => {
         allStoreProducts = [];
@@ -858,6 +788,82 @@ Trusted by pet owners and professional</p>
         allStoreProducts.sort((a,b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
         window.renderStoreProducts();
       });
+    }
+    
+    // --- ADVERTISEMENT CAROUSEL LOGIC ---
+    function renderAdCarousel() {
+        const container = document.getElementById('adCarouselContainer');
+        const inner = document.getElementById('adCarouselInner');
+        const dots = document.getElementById('adDots');
+        
+        clearInterval(adSlideInterval);
+        
+        if (allAds.length === 0) {
+            container.classList.add('hidden');
+            return;
+        }
+        
+        container.classList.remove('hidden');
+        inner.innerHTML = '';
+        dots.innerHTML = '';
+        
+        allAds.forEach((ad, index) => {
+            // Overlay text (only show if any text exists)
+            const hasText = ad.title || ad.subtitle || ad.buttonText;
+            const overlayHtml = hasText ? `
+              <div class="absolute inset-0 bg-black/40 flex flex-col justify-center items-center text-center p-6 z-10">
+                 ${ad.title ? `<h2 class="text-3xl md:text-5xl font-black text-white drop-shadow-xl mb-2">${ad.title}</h2>` : ''}
+                 ${ad.subtitle ? `<p class="text-lg md:text-2xl text-slate-100 font-bold drop-shadow-md mb-6">${ad.subtitle}</p>` : ''}
+                 ${ad.buttonText ? `<a href="${ad.buttonLink}" class="bg-white text-slate-900 font-bold px-8 py-3 rounded-full text-sm md:text-lg shadow-2xl hover:scale-105 transition-transform">${ad.buttonText}</a>` : ''}
+              </div>
+            ` : '';
+
+            inner.innerHTML += `
+                <div class="ad-slide relative bg-slate-800 flex-shrink-0 w-full h-full flex items-center justify-center">
+                    <img src="${ad.imageBase64}" class="w-full h-full object-cover">
+                    ${overlayHtml}
+                </div>
+            `;
+            
+            dots.innerHTML += `<button onclick="goToAdSlide(${index})" class="w-2.5 h-2.5 rounded-full transition-all duration-300 ${index === 0 ? 'bg-white scale-125' : 'bg-white/40 hover:bg-white/70'}"></button>`;
+        });
+        
+        currentAdIndex = 0;
+        updateAdSlider();
+        
+        if (allAds.length > 1) {
+            adSlideInterval = setInterval(() => {
+                currentAdIndex = (currentAdIndex + 1) % allAds.length;
+                updateAdSlider();
+            }, 5000);
+        }
+    }
+    
+    window.goToAdSlide = (index) => {
+        currentAdIndex = index;
+        updateAdSlider();
+        // Reset interval
+        clearInterval(adSlideInterval);
+        if (allAds.length > 1) {
+            adSlideInterval = setInterval(() => {
+                currentAdIndex = (currentAdIndex + 1) % allAds.length;
+                updateAdSlider();
+            }, 5000);
+        }
+    };
+    
+    function updateAdSlider() {
+        const inner = document.getElementById('adCarouselInner');
+        inner.style.transform = `translateX(-${currentAdIndex * 100}%)`;
+        
+        const dots = document.getElementById('adDots').children;
+        for (let i = 0; i < dots.length; i++) {
+            if (i === currentAdIndex) {
+                dots[i].className = 'w-2.5 h-2.5 rounded-full transition-all duration-300 bg-white scale-125';
+            } else {
+                dots[i].className = 'w-2.5 h-2.5 rounded-full transition-all duration-300 bg-white/40 hover:bg-white/70';
+            }
+        }
     }
 
     // --- Product Modal Logic ---
