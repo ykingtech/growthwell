@@ -2,44 +2,88 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Growthwell Admin | Premium Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Growthwell | Premium Pet Care</title>
+  <!-- Favicon -->
   <link rel="icon" type="image/jpeg" href="logo.jpeg" />
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
+    /* CSS Variables for Dynamic Themes */
     :root {
       --theme-from: #ef4444;
       --theme-to: #dc2626;
-      --theme-badge: rgba(239, 68, 68, 0.2);
-      --theme-text: #f87171;
+      --theme-text: #ef4444;
+      --theme-bg-glow: rgba(239, 68, 68, 0.1);
     }
 
-    body { font-family: 'Outfit', sans-serif; background-color: #0f172a; color: #e2e8f0; margin: 0; overflow-x: hidden; }
+    body { 
+      font-family: 'Outfit', sans-serif; 
+      margin: 0; 
+      overflow-x: hidden; 
+      background-image: url('https://images.unsplash.com/photo-1544568100-847a948585b9?auto=format&fit=crop&w=1920&q=80'); 
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+    
+    .bg-overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(15, 23, 42, 0.75);
+      z-index: -2; pointer-events: none;
+    }
+
     #bg-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
     
-    .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
-    .input { width: 100%; padding: 12px 16px; margin-bottom: 16px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(15, 23, 42, 0.6); color: white; transition: all 0.3s; }
-    .input:focus { outline: none; border-color: var(--theme-from); box-shadow: 0 0 0 2px var(--theme-badge); background: rgba(15, 23, 42, 0.9); }
+    .glass-nav { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.2); }
+    .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 10px 40px -10px rgba(0,0,0,0.2); }
     
-    .btn-primary { background: linear-gradient(135deg, var(--theme-from), var(--theme-to)); color: white; padding: 12px 20px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s; border: none; }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px var(--theme-from); }
+    .input { width: 100%; padding: 14px 20px; margin-bottom: 16px; border-radius: 16px; border: 1px solid #e2e8f0; background: #ffffff; color: #0f172a; transition: all 0.3s; }
+    .input:focus { outline: none; border-color: var(--theme-from); box-shadow: 0 0 0 4px var(--theme-bg-glow); }
     
-    .tab-btn { color: #94a3b8; border: 1px solid transparent; }
-    .tab-btn.active { background: var(--theme-badge); color: var(--theme-text); border: 1px solid var(--theme-badge); font-weight: 600; }
+    .btn-gradient { background: linear-gradient(135deg, var(--theme-from), var(--theme-to)); color: white; padding: 12px 24px; border-radius: 9999px; font-weight: 700; cursor: pointer; text-align: center; display: inline-block; transition: all 0.3s; border: none; }
+    .btn-gradient:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px var(--theme-from); filter: brightness(1.1); }
+    .btn-gradient:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+    
+    .text-gradient { background-image: linear-gradient(to right, var(--theme-from), var(--theme-to)); -webkit-background-clip: text; color: transparent; }
+
     .view-section { display: none; animation: fadeIn 0.4s ease-out; }
     .active-view { display: block; }
     
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideInUp { from { opacity: 0; transform: translateY(40px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
     
-    /* New Custom Seasonal Logo Animations */
+    .modal-animation { animation: slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+
+    /* Out-of-the-box Theme Animations */
+    @keyframes fly-bird {
+        0% { transform: translate(-40px, 15px) rotate(20deg) scaleX(-1); }
+        49.9% { transform: translate(50px, -25px) rotate(-15deg) scaleX(-1); }
+        50% { transform: translate(50px, -25px) rotate(15deg) scaleX(1); }
+        99.9% { transform: translate(-40px, 15px) rotate(-20deg) scaleX(1); }
+        100% { transform: translate(-40px, 15px) rotate(20deg) scaleX(-1); }
+    }
+    .animate-fly { animation: fly-bird 5s ease-in-out infinite; display: inline-block; }
+
+    @keyframes holy-glow {
+        0%, 100% { filter: drop-shadow(0 0 12px #fde047) brightness(1.1); transform: translateY(0) scale(1); }
+        50% { filter: drop-shadow(0 0 25px #f59e0b) brightness(1.3); transform: translateY(-4px) scale(1.05); }
+    }
+    .animate-holy { animation: holy-glow 3s ease-in-out infinite; }
+
     @keyframes swing {
       0%, 100% { transform: rotate(-15deg); }
       50% { transform: rotate(15deg); }
     }
     .animate-swing { animation: swing 2s ease-in-out infinite; transform-origin: top center; }
+
+    @keyframes tree-glow {
+      0%, 100% { filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.5)); transform: scale(1) rotate(-5deg); }
+      50% { filter: drop-shadow(0 0 15px rgba(34, 197, 94, 0.8)); transform: scale(1.05) rotate(5deg); }
+    }
+    .animate-tree { animation: tree-glow 2.5s ease-in-out infinite; }
 
     @keyframes beat {
       0%, 50%, 100% { transform: scale(1); }
@@ -48,26 +92,11 @@
     }
     .animate-beat { animation: beat 0.6s ease-in-out infinite; }
 
-    @keyframes tree-glow {
-      0%, 100% { filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.5)); transform: scale(1) rotate(-5deg); }
-      50% { filter: drop-shadow(0 0 15px rgba(34, 197, 94, 0.8)); transform: scale(1.05) rotate(5deg); }
+    @keyframes marquee {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
     }
-    .animate-tree { animation: tree-glow 2.5s ease-in-out infinite; }
-
-    @keyframes fly-bird {
-        0% { transform: translate(-30px, 10px) rotate(20deg) scaleX(-1); }
-        49.9% { transform: translate(40px, -20px) rotate(-15deg) scaleX(-1); }
-        50% { transform: translate(40px, -20px) rotate(15deg) scaleX(1); }
-        99.9% { transform: translate(-30px, 10px) rotate(-20deg) scaleX(1); }
-        100% { transform: translate(-30px, 10px) rotate(20deg) scaleX(-1); }
-    }
-    .animate-fly { animation: fly-bird 5s ease-in-out infinite; display: inline-block; }
-
-    @keyframes holy-glow {
-        0%, 100% { filter: drop-shadow(0 0 8px #fde047) brightness(1.1); transform: translateY(0) scale(1); }
-        50% { filter: drop-shadow(0 0 20px #f59e0b) brightness(1.3); transform: translateY(-3px) scale(1.05); }
-    }
-    .animate-holy { animation: holy-glow 3s ease-in-out infinite; }
+    .animate-marquee { display: inline-block; white-space: nowrap; animation: marquee 15s linear infinite; }
 
     @keyframes float-img {
         0%, 100% { transform: translateY(0px); }
@@ -75,303 +104,491 @@
     }
     .animate-float { animation: float-img 3s ease-in-out infinite; }
 
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
-    ::-webkit-scrollbar-thumb { background: rgba(71, 85, 105, 0.8); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 1); }
+    /* --- 100% BULLETPROOF Delivery Banner Animations (10s Loop) --- */
+    .anim-scooter-main { 
+        position: absolute;
+        bottom: 16px;
+        width: max-content;
+        animation: drive-across-safe 10s ease-in-out infinite; 
+        z-index: 20;
+    }
+
+    @keyframes drive-across-safe {
+      0%   { left: 150%; transform: translateX(0); } /* Start far right */
+      15%  { left: 50%; transform: translateX(-50%); } /* Stop exactly at center */
+      75%  { left: 50%; transform: translateX(-50%); } /* Wait at center */
+      80%  { left: 50%; transform: translateX(-50%) rotate(5deg); } /* Rev up */
+      90%  { left: -50%; transform: translateX(-100%) rotate(-5deg); } /* Speed away left */
+      100% { left: -50%; transform: translateX(-100%); }
+    }
+
+    .anim-idle { 
+        animation: idle-bounce 0.4s infinite alternate ease-in-out; 
+    }
+    @keyframes idle-bounce {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-4px); }
+    }
+
+    .anim-boxes { 
+        animation: boxes-drop 10s infinite; 
+        transform-origin: bottom center; 
+    }
+    @keyframes boxes-drop {
+      0%, 15% { transform: translateY(-100px) scale(0.5); opacity: 0; }
+      18% { transform: translateY(10px) scale(1.1); opacity: 1; }
+      20%, 100% { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .anim-wind { 
+        animation: wind-blow 10s infinite; 
+    }
+    @keyframes wind-blow {
+      0%, 79% { transform: translateX(0) scale(0.5); opacity: 0; }
+      81% { transform: translateX(30px) scale(1); opacity: 1; }
+      86%, 100% { transform: translateX(80px) scale(1.5); opacity: 0; }
+    }
+
+    .cart-badge { position: absolute; top: -6px; right: -6px; background: white; color: var(--theme-from); border: 2px solid var(--theme-from); border-radius: 50%; width: 22px; height: 22px; font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: 900; box-shadow: 0 4px 10px var(--theme-bg-glow); }
     
-    /* Toggle Switch styles */
-    .toggle-checkbox:checked { right: 0; border-color: var(--theme-from); background-color: var(--theme-from); }
-    .toggle-checkbox:checked + .toggle-label { background-color: var(--theme-badge); }
+    .cat-pill { padding: 8px 20px; border-radius: 9999px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.3); background: rgba(255, 255, 255, 0.9); color: #475569; white-space: nowrap; box-shadow: 0 4px 15px rgba(0,0,0,0.1); backdrop-filter: blur(10px); }
+    .cat-pill.active { background: var(--theme-from); color: white; border-color: var(--theme-from); box-shadow: 0 4px 15px var(--theme-bg-glow); }
+    .cat-pill:hover:not(.active) { border-color: var(--theme-from); color: var(--theme-text); background: #ffffff; }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="min-h-screen flex flex-col md:flex-row w-full">
+<body class="min-h-screen flex flex-col">
 
+  <!-- Background Overlay & Canvas -->
+  <div class="bg-overlay"></div>
   <div id="bg-canvas"></div>
 
-  <!-- Sidebar -->
-  <aside class="w-full md:w-72 glass-panel border-b md:border-b-0 md:border-r border-slate-700/50 sticky top-0 flex flex-col z-50 shadow-lg md:shadow-2xl">
-    <div class="p-4 md:p-6 flex justify-between items-center md:block">
-      <div class="flex items-center gap-3">
+  <!-- Announcement Banner -->
+  <div id="announcement-banner" class="hidden w-full overflow-hidden text-white py-2 px-4 shadow-md relative z-[60]" style="background: linear-gradient(90deg, var(--theme-from), var(--theme-to));">
+    <div class="w-full flex justify-center items-center font-bold text-sm tracking-wide">
+       <span class="mr-2">📢</span> 
+       <span id="announcement-text" class="transition-opacity duration-500 opacity-100 text-center"></span> 
+       <span class="ml-2">📢</span>
+    </div>
+  </div>
+
+  <!-- ================= MAIN LAYOUT ================= -->
+  <div id="mainLayout" class="view-section active-view flex-grow flex flex-col z-10 relative">
+    
+    <!-- Header -->
+    <header class="glass-nav sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         
         <!-- Interactive Logo Section -->
-        <div class="relative flex items-center">
-          <img src="logo3.jpeg" alt="Growthwell" class="h-10 md:h-12 object-contain rounded-lg shadow-lg relative z-10 bg-white">
-          
-          <!-- Seasonal Overlays (Emojis + Uploaded Images) -->
-          <div id="dec-christmas" class="hidden absolute inset-0 z-20 pointer-events-none">
-            <div class="absolute -top-4 -left-3 text-3xl transform -rotate-12 drop-shadow-md">🎅</div>
-            <div class="absolute -top-3 -right-3 text-3xl animate-tree">🎄</div>
-            <img src="pngwing.com.png" alt="Christmas" class="absolute -bottom-3 -right-6 w-11 h-11 object-contain bg-white/95 rounded-full shadow-xl border border-blue-400/50 p-1 animate-swing">
-          </div>
-          
-          <div id="dec-vesak" class="hidden absolute inset-0 z-20 pointer-events-none">
-            <div class="absolute -top-2 -right-6 text-3xl animate-holy"></div>
-            <div class="absolute -bottom-2 -right-4 text-3xl animate-swing">🏮</div>
+        <div class="flex items-center gap-3 cursor-pointer group relative" onclick="window.showMainView('home')">
+          <div class="relative z-10 flex items-center">
+            <img src="logo3.jpeg" alt="Growthwell Logo" class="h-10 sm:h-12 object-contain rounded-lg group-hover:scale-105 transition-transform drop-shadow-sm bg-white relative z-10">
+            <!-- Theme Decorations -->
+            <div id="dec-christmas" class="hidden absolute inset-0 z-20 pointer-events-none">
+              <div class="absolute -top-4 -left-3 text-3xl transform -rotate-12 drop-shadow-md">🎅</div>
+              <div class="absolute -top-3 -right-3 text-3xl animate-tree">🎄</div>
+              <img src="pngwing.com.png" alt="Christmas" class="absolute -bottom-7 -right-8 w-11 h-11 object-contain bg-white/95 rounded-full shadow-xl border border-blue-400/50 p-1 animate-swing">
+            </div>
             
-          </div>
-          
-          <div id="dec-avurudu" class="hidden absolute inset-0 z-20 pointer-events-none">
-            <div class="absolute -top-3 -right-3 text-3xl animate-beat"></div>
-            <div class="absolute top-2 left-1/2 text-3xl drop-shadow-md"><span class="animate-fly"></span></div>
-            <img src="pngwing.com (41).png" alt="Avurudu" class="absolute -top-1 -right-12 w-16 h-auto object-contain bg-white/95 rounded-lg shadow-xl border border-orange-400/50 p-1 animate-float">
+            <div id="dec-vesak" class="hidden absolute inset-0 z-20 pointer-events-none">
+              <div class="absolute -top-2 -right-6 text-3xl animate-holy"></div>
+              <div class="absolute -bottom-6 -right-4 text-3xl animate-swing">🏮</div>
+              <img src="pngwing.com (2).png" alt="Vesak" class="absolute -bottom-7 -left-4 w-11 h-11 object-contain bg-white/95 rounded-full shadow-xl border border-amber-400/50 p-1 animate-holy">
+            </div>
+            
+            <div id="dec-avurudu" class="hidden absolute inset-0 z-20 pointer-events-none">
+              <div class="absolute -top-4 -left-3 text-3xl animate-beat">🪘</div>
+              <div class="absolute top-2 left-1/2 text-3xl drop-shadow-md"><span class="animate-fly"></span></div>
+              <img src="pngwing.com (41).png" alt="Avurudu" class="absolute -bottom-16 -right-8 w-25 h-auto object-contain bg-white/95 rounded-lg shadow-xl border border-orange-400/50 p-1 animate-float">
+            </div>
           </div>
         </div>
+
         
-        <div>
-          <h1 class="text-xl font-extrabold text-white tracking-wide leading-tight hidden md:block mt-1">Growthwell</h1>
-          <span class="text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 rounded-full block w-max mt-0.5" style="color: var(--theme-text); background-color: var(--theme-badge);">Admin Portal</span>
-        </div>
-      </div>
-      <button class="md:hidden text-3xl text-slate-300 focus:outline-none p-2 rounded-lg hover:bg-slate-800/50 transition" onclick="document.getElementById('mobileNav').classList.toggle('hidden')">☰</button>
-    </div>
-    
-    <nav id="mobileNav" class="hidden md:flex flex-col flex-grow p-4 space-y-2 bg-slate-900/95 md:bg-transparent backdrop-blur-xl absolute md:relative w-full left-0 top-full md:top-auto border-b md:border-b-0 border-slate-700/50 shadow-2xl md:shadow-none z-50">
-      <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 ml-2 mt-2">Menu</p>
-      <button onclick="switchTab('products')" id="tab-products" class="tab-btn active w-full text-left px-4 py-3.5 rounded-xl transition-all flex items-center gap-3">
-        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-        Products
-      </button>
-      <button onclick="switchTab('orders')" id="tab-orders" class="tab-btn w-full text-left px-4 py-3.5 rounded-xl transition-all flex items-center gap-3">
-        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-        Orders
-      </button>
-      <button onclick="switchTab('settings')" id="tab-settings" class="tab-btn w-full text-left px-4 py-3.5 rounded-xl transition-all flex items-center gap-3">
-        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-        Settings & Themes
-      </button>
-      <div class="pt-6 mt-auto border-t border-slate-700/50 md:block">
-        <a href="index.html" target="_blank" class="flex items-center justify-center gap-2 w-full text-sm font-semibold text-slate-300 hover:text-white py-3 rounded-xl bg-slate-800/50 hover:bg-slate-700/50 border border-slate-600/50 transition-all">
-          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-          Visit Storefront
-        </a>
-      </div>
-    </nav>
-  </aside>
-
-  <!-- Main Content -->
-  <main class="flex-grow p-4 md:p-8 overflow-y-auto overflow-x-hidden w-full max-w-full z-10">
-    
-    <!-- 1. PRODUCTS VIEW -->
-    <section id="view-products" class="view-section active-view max-w-7xl mx-auto w-full">
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
-        <div>
-          <h2 class="text-2xl md:text-3xl font-bold text-white">Products</h2>
-          <p class="text-slate-400 text-sm mt-1">Manage your store inventory</p>
-        </div>
-      </div>
-
-      <div class="grid lg:grid-cols-12 gap-6 md:gap-8">
-        <!-- Add Product Form -->
-        <div class="lg:col-span-4 w-full">
-          <div class="glass-panel p-5 md:p-6 rounded-2xl md:sticky top-24 border border-slate-700 shadow-xl">
-            <h3 class="font-bold text-lg text-white mb-6 flex items-center gap-2">
-              <span class="p-1.5 rounded-lg" style="color: var(--theme-text); background-color: var(--theme-badge);"><svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></span>
-              Add New Product
-            </h3>
-            
-            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Product Name</label>
-            <input id="pName" placeholder="e.g. Premium Dog Food" class="input">
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-0 sm:gap-4">
-              <div>
-                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Price (Rs.)</label>
-                <input id="pPrice" type="number" placeholder="0.00" class="input">
-              </div>
-              <div>
-                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Pet Type</label>
-                <select id="pType" class="input appearance-none font-medium">
-                  <option value="All">All Pets</option>
-                  <option value="Dog">Dogs 🐶</option>
-                  <option value="Cat">Cats 🐱</option>
-                </select>
-              </div>
-            </div>
-
-            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Keywords (Comma separated)</label>
-            <input id="pKeywords" placeholder="e.g. food, vitamins" class="input">
-            
-            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Description</label>
-            <textarea id="pDesc" placeholder="Full product details..." class="input resize-none h-24"></textarea>
-            
-            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Product Image</label>
-            <div class="relative border-2 border-dashed border-slate-600 rounded-xl p-4 text-center hover:bg-slate-800/50 transition cursor-pointer mb-4">
-              <input type="file" id="pImageFile" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-              <div class="text-slate-400 flex flex-col items-center">
-                <svg class="w-8 h-8 mb-2 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                <span class="text-sm font-medium">Tap to upload image</span>
-              </div>
-            </div>
-            
-            <!-- Image Preview -->
-            <div id="previewContainer" class="hidden mb-4 relative group bg-white rounded-xl">
-              <img id="imgPreview" class="w-full h-40 object-contain p-2 rounded-xl border border-slate-600">
-              <button onclick="clearImage()" class="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-lg opacity-100 md:opacity-0 group-hover:opacity-100 transition shadow-lg"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
-            </div>
-
-            <button onclick="addProduct()" class="btn-primary w-full mt-2 flex justify-center items-center gap-2" id="addBtn">
-              <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-              Publish Product
-            </button>
+        <div class="flex items-center gap-4 sm:gap-6">
+          <div class="hidden md:flex items-center gap-3">
+            <button onclick="window.showMainView('home')" class="text-sm font-bold text-white btn-gradient px-5 py-2.5 rounded-full shadow-lg transition-all hover:-translate-y-0.5">Home</button>
+            <button onclick="window.showMainView('about')" class="text-sm font-bold text-white btn-gradient px-5 py-2.5 rounded-full shadow-lg transition-all hover:-translate-y-0.5">About Us</button>
+            <button onclick="window.showMainView('orders')" class="text-sm font-bold text-white btn-gradient px-5 py-2.5 rounded-full shadow-lg transition-all hover:-translate-y-0.5">My Orders</button>
           </div>
-        </div>
-
-        <!-- Product List -->
-        <div class="lg:col-span-8 flex flex-col gap-6 w-full max-w-full">
-          <div class="glass-panel p-4 rounded-2xl flex flex-col sm:flex-row gap-4 w-full">
-            <div class="flex-grow relative">
-              <svg class="w-5 h-5 absolute left-3 top-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-              <input type="text" id="searchProduct" placeholder="Search products..." class="input m-0 pl-10" oninput="renderProducts()">
-            </div>
-            <div class="w-full sm:w-40 shrink-0">
-              <select id="filterPetType" class="input m-0 appearance-none bg-slate-800 font-medium" onchange="renderProducts()">
-                <option value="All">All Types</option>
-                <option value="Dog">Dogs 🐶</option>
-                <option value="Cat">Cats 🐱</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="glass-panel p-4 md:p-6 rounded-2xl shadow-2xl w-full border border-slate-700/50">
-            <div id="adminProductList" class="flex flex-col gap-3">
-              <div class="p-8 text-center text-slate-400">Loading inventory...</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 2. ORDERS VIEW -->
-    <section id="view-orders" class="view-section max-w-7xl mx-auto w-full">
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
-        <div>
-          <h2 class="text-2xl md:text-3xl font-bold text-white">Orders Management</h2>
-          <p class="text-slate-400 text-sm mt-1">Review and process customer orders</p>
-        </div>
-      </div>
-      <div class="grid gap-6 w-full" id="adminOrdersList">
-        <div class="glass-panel p-10 rounded-2xl text-center text-slate-400">Loading orders...</div>
-      </div>
-    </section>
-
-    <!-- 3. SETTINGS & THEMES VIEW -->
-    <section id="view-settings" class="view-section max-w-7xl mx-auto w-full">
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
-        <div>
-          <h2 class="text-2xl md:text-3xl font-bold text-white">Settings & Themes</h2>
-          <p class="text-slate-400 text-sm mt-1">Global store announcements and seasonal appearances</p>
+          
+          <button onclick="window.showMainView('cart')" class="relative p-2.5 text-white btn-gradient rounded-full shadow-lg transition-all hover:-translate-y-0.5 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <span id="cartCount" class="cart-badge hidden">0</span>
+          </button>
+          
+          <button class="md:hidden text-white text-2xl focus:outline-none btn-gradient !p-2 rounded-lg shadow-md" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">☰</button>
         </div>
       </div>
       
-      <!-- Store Announcements Settings -->
-      <div class="glass-panel p-6 md:p-8 rounded-3xl mb-8 border border-slate-600 shadow-2xl relative overflow-hidden">
-        <div class="absolute -right-10 -top-10 text-9xl opacity-5 grayscale">📢</div>
-        <h3 class="text-2xl font-bold text-white mb-2 relative z-10">Store Announcements</h3>
-        <p class="text-slate-400 mb-6 text-sm relative z-10 leading-relaxed">Display a rotating global notice bar at the top of the main website. <strong class="text-white">Write each announcement on a new line.</strong> They will automatically rotate every 5 seconds.</p>
+      <!-- Mobile Menu -->
+      <div id="mobileMenu" class="hidden md:hidden glass-nav border-t border-slate-200 px-6 py-5 space-y-3 absolute w-full left-0 shadow-xl">
+        <button onclick="window.showMainView('home'); this.parentElement.classList.add('hidden')" class="w-full text-center font-bold text-white btn-gradient px-4 py-3 rounded-xl shadow-lg text-lg transition-all active:scale-95">Home</button>
+        <button onclick="window.showMainView('about'); this.parentElement.classList.add('hidden')" class="w-full text-center font-bold text-white btn-gradient px-4 py-3 rounded-xl shadow-lg text-lg transition-all active:scale-95">About Us</button>
+        <button onclick="window.showMainView('orders'); this.parentElement.classList.add('hidden')" class="w-full text-center font-bold text-white btn-gradient px-4 py-3 rounded-xl shadow-lg text-lg transition-all active:scale-95">My Orders</button>
+      </div>
+    </header>
+
+    <!-- VIEWS -->
+    <div class="flex-grow">
+      
+      <!-- 1. HOME VIEW (Products) -->
+      <section id="view-home" class="view-content active-view">
         
-        <div class="space-y-4 relative z-10 max-w-3xl">
-          <textarea id="noticeMessage" placeholder="Free delivery on orders over Rs. 5000!&#10;We are closed on Poya Days.&#10;Special discounts this Christmas!" class="input resize-none h-36 mb-2 shadow-inner border-slate-600 focus:border-blue-500 leading-relaxed"></textarea>
-          
-          <div class="flex items-center justify-between bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-            <span class="font-bold text-slate-300">Enable Announcement Bar</span>
-            <div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
-                <input type="checkbox" id="noticeActive" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-slate-500 transition-all duration-300 z-10"/>
-                <label for="noticeActive" class="toggle-label block overflow-hidden h-6 rounded-full bg-slate-600 cursor-pointer transition-all duration-300"></label>
+        <!-- Animated Delivery Banner -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-2">
+          <div class="relative w-full rounded-[2rem] overflow-hidden shadow-2xl bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 border border-blue-400/50 flex flex-col md:flex-row items-center justify-between p-6 md:p-10 min-h-[220px]">
+            <!-- Background Decorations -->
+            <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 20px 20px;"></div>
+            <div class="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-white/20 to-transparent pointer-events-none transform skew-x-12 translate-x-10"></div>
+
+            <!-- Text Content -->
+            <div class="relative z-10 w-full md:w-3/5 text-center md:text-left flex flex-col items-center md:items-start">
+              <div class="inline-flex items-center gap-2 bg-red-600 text-white px-4 py-1.5 rounded-full text-xs font-black tracking-widest uppercase mb-4 shadow-lg shadow-red-600/30 border border-red-400">
+                <span class="animate-pulse">⏱️</span> Same Day Delivery <span class="text-[10px] bg-red-800/80 px-2 py-0.5 rounded-full ml-1">Order Before 12 PM</span>
+              </div>
+              <h2 class="text-4xl md:text-5xl lg:text-6xl font-black italic tracking-tighter uppercase mb-2 text-white drop-shadow-lg" style="text-shadow: 2px 3px 0px rgba(30, 58, 138, 0.6);">
+                Need it ASAP?
+              </h2>
+              <h3 class="text-2xl md:text-3xl font-extrabold uppercase mb-5 text-blue-100 drop-shadow-md">
+                We got you covered!
+              </h3>
+              <div class="inline-flex items-center gap-2 font-bold bg-white text-blue-800 px-5 py-2.5 rounded-xl shadow-xl hover:scale-105 transition-transform cursor-default border border-blue-100">
+                Urgent Needs <span class="bg-green-500 text-white rounded-md w-6 h-6 flex items-center justify-center text-sm shadow-inner">✓</span>
+              </div>
+            </div>
+
+            <!-- Animation Container -->
+            <div class="relative w-full md:w-2/5 h-48 md:h-full mt-6 md:mt-0 overflow-hidden rounded-xl">
+               <div class="absolute bottom-4 w-full border-b-4 border-dashed border-white/30"></div> <!-- Road Line -->
+               
+               <!-- Main Scooter Animation Wrapper -->
+               <div class="anim-scooter-main">
+                  <div class="anim-idle relative flex items-end">
+                     <!-- Loading Boxes -->
+                     <div class="anim-boxes absolute bottom-12 left-0 md:-left-4 z-10 flex flex-col items-center">
+                        <div class="text-3xl md:text-4xl drop-shadow-2xl mb-[-12px] transform -rotate-12">📦</div>
+                        <div class="text-4xl md:text-5xl drop-shadow-2xl">📦</div>
+                     </div>
+                     <!-- Scooter Emoji -->
+                     <div class="text-[90px] md:text-[110px] drop-shadow-2xl leading-none" style="transform: scaleX(-1);">🛵</div>
+                     <!-- Wind Speed Lines (Flipped to point right, indicating left movement) -->
+                     <div class="anim-wind absolute top-1/2 -right-12 text-4xl opacity-0" style="transform: scaleX(-1);">💨</div>
+                  </div>
+               </div>
             </div>
           </div>
+        </div>
+        <!-- End of Banner -->
+
+        <!-- Hero Section -->
+        <div class="relative pt-6 md:pt-12 pb-16 px-6 text-center max-w-4xl mx-auto">
+          <div class="inline-block mb-4 px-5 py-2 rounded-full bg-white/90 backdrop-blur-md border border-white/50 font-bold text-sm shadow-lg" style="color: var(--theme-text);">
+            🐾 No.1 Pet Care Store
+          </div>
+          <h2 class="text-5xl md:text-7xl font-extrabold mb-6 text-white drop-shadow-xl tracking-tight leading-tight">
+            Premium Care for <br/> <span class="text-gradient drop-shadow-sm">Your Best Friend</span>
+          </h2>
+          <p class="text-slate-200 text-lg md:text-xl font-medium mb-10 max-w-2xl mx-auto drop-shadow-md">
+            Discover top-tier nutrition, vitamins, and essentials curated specially for the wellbeing of your pets.
+          </p>
           
-          <button onclick="saveAnnouncement()" class="btn-primary flex items-center justify-center gap-2 mt-4 px-8 py-3" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
-             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
-             Save Announcements
+          <!-- Search Bar -->
+          <div class="relative max-w-2xl mx-auto group z-20">
+            <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+              <svg class="h-6 w-6" style="color: var(--theme-text);" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            </div>
+            <input type="text" id="storeSearch" placeholder="Search for food, vitamins, toys..." class="w-full bg-white/95 backdrop-blur-xl border border-white/50 rounded-full py-4 pl-14 pr-6 text-slate-800 text-lg placeholder-slate-400 transition-all shadow-2xl outline-none" oninput="renderStoreProducts()">
+          </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="max-w-7xl mx-auto px-6 mb-12">
+          <div class="flex overflow-x-auto gap-3 pb-4 no-scrollbar items-center justify-start md:justify-center" id="categoryFilters">
+            <button class="cat-pill active" onclick="setFilter('All', this)">All Pets</button>
+            <button class="cat-pill" onclick="setFilter('Dog', this)">Dogs 🐶</button>
+            <button class="cat-pill" onclick="setFilter('Cat', this)">Cats 🐱</button>
+          </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="max-w-7xl mx-auto px-6 pb-24">
+          <div id="productList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            <div class="col-span-full flex flex-col items-center justify-center py-20 opacity-80">
+              <svg class="animate-spin h-10 w-10 text-white mb-4 drop-shadow-md" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+              <p class="text-white font-medium drop-shadow-md">Loading premium products...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. ABOUT US VIEW -->
+      <section id="view-about" class="view-content hidden max-w-5xl mx-auto px-6 py-12">
+        <div class="text-center mb-12">
+          <h2 class="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg mb-4">About <span class="text-gradient">Growthwell</span></h2>
+          <p class="text-slate-200 text-lg max-w-2xl mx-auto font-medium">Your trusted partner in providing the best care, nutrition, and love for your furry friends in Sri Lanka.</p>
+        </div>
+        
+        <div class="glass-card rounded-3xl p-8 md:p-12 mb-12 shadow-2xl relative overflow-hidden">
+          <div class="absolute -top-32 -left-32 w-64 h-64 rounded-full mix-blend-multiply filter blur-3xl opacity-50" style="background-color: var(--theme-from);"></div>
+          
+          <div class="grid md:grid-cols-2 gap-10 relative z-10 items-center">
+            <div>
+              <h3 class="text-3xl font-bold text-slate-800 mb-4">About Us 🐾</h3>
+              <p class="text-slate-600 text-lg leading-relaxed mb-6 font-medium">Growthwell Health Care is a dedicated animal care manufacturing company specializing in high-quality products for dogs and cats. As a proudly local manufacturer, we are committed to improving the health, hygiene, and overall well-being of pets through safe, effective, and affordable solutions.<br>
+
+<h3 class="text-3xl font-bold text-slate-800 mb-4">Who We Are</h3>
+
+Growthwell was established with a passion for animal care and a vision to support pet owners with reliable, locally produced products. We understand the importance of maintaining pet health, which is why we focus on creating formulations that meet both quality standards and practical needs.<br>
+
+<h3 class="text-3xl font-bold text-slate-800 mb-4">What We do</h3>
+
+We manufacture a wide range of pet care products, including:<br>
+
+Nutritional supplements and vitamins<br>
+
+Medicated and herbal shampoos<br>
+
+Grooming and hygiene products<br>
+
+Specialty care solutions for dogs and cats<br>
+
+Each product is carefully developed to ensure safety, effectiveness, and ease of use.<br>
+
+<h3 class="text-3xl font-bold text-slate-800 mb-4">Our Mission</h3>
+
+To provide high-quality, locally manufactured pet care products that enhance the health, comfort, and happiness of animals while building trust with pet owners.<br>
+
+<h3 class="text-3xl font-bold text-slate-800 mb-4">Our Vision</h3>
+To become a leading and trusted brand in the pet care industry by delivering innovative, affordable, and reliable products for animal well-being.<br>
+
+<h3 class="text-3xl font-bold text-slate-800 mb-4">Our Commitment</h3>
+
+Quality Assurance: We maintain strict production standards to ensure consistent product quality.<br>
+
+Animal Safety: All products are formulated with pet safety as a top priority.<br>
+
+Local Excellence: As a local manufacturer, we support the community while offering cost-effective solutions.<br>
+
+Innovation: Continuous improvement and product development to meet evolving pet care needs.<br>
+
+<h3 class="text-3xl font-bold text-slate-800 mb-4">Why Choose Growthwell</h3>
+
+Locally manufactured with care<br>
+
+Affordable and reliable products<br>
+
+Focused on pet health and hygiene<br>
+
+Trusted by pet owners and professional</p>
+              <p class="text-slate-600 text-lg leading-relaxed font-medium">We ensure that all our products meet strict quality standards, offering you peace of mind and your pets the vitality they need.</p>
+            </div>
+            <div class="rounded-2xl overflow-hidden shadow-2xl border-4 border-white transform rotate-2 hover:rotate-0 transition duration-500">
+              <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=80" alt="Happy Dog" class="w-full h-full object-cover">
+            </div>
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-3 gap-6">
+          <div class="glass-card p-8 rounded-3xl text-center hover:-translate-y-2 transition-transform border border-white/50">
+            <div class="text-5xl mb-4">🩺</div>
+            <h4 class="text-xl font-extrabold text-slate-800 mb-2">Vet Approved</h4>
+            <p class="text-slate-500 font-medium">Products highly recommended by professionals.</p>
+          </div>
+          <div class="glass-card p-8 rounded-3xl text-center hover:-translate-y-2 transition-transform border border-white/50">
+            <div class="text-5xl mb-4">🚚</div>
+            <h4 class="text-xl font-extrabold text-slate-800 mb-2">Fast Delivery</h4>
+            <p class="text-slate-500 font-medium">Quick and safe delivery right to your doorstep.</p>
+          </div>
+          <div class="glass-card p-8 rounded-3xl text-center hover:-translate-y-2 transition-transform border border-white/50">
+            <div class="text-5xl mb-4">❤️</div>
+            <h4 class="text-xl font-extrabold text-slate-800 mb-2">Made with Love</h4>
+            <p class="text-slate-500 font-medium">Everything we do is out of pure love for pets.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. CART VIEW -->
+      <section id="view-cart" class="view-content hidden max-w-4xl mx-auto px-6 py-12">
+        <div class="flex items-center justify-between mb-8">
+          <h2 class="text-4xl font-extrabold text-white drop-shadow-lg">Your Cart</h2>
+          <button onclick="window.showMainView('home')" class="font-semibold flex items-center gap-2 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-5 py-2.5 rounded-full transition shadow-lg">
+            <span>&larr;</span> Continue Shopping
           </button>
         </div>
+        
+        <div class="glass-card rounded-3xl p-6 md:p-8">
+          <div id="cartItemsList" class="space-y-4 mb-8">
+            <div class="text-center py-16">
+              <div class="text-7xl mb-6 opacity-40 grayscale filter drop-shadow-sm">🛍️</div>
+              <p class="text-slate-500 text-lg font-medium">Your cart is feeling light.</p>
+            </div>
+          </div>
+          
+          <div class="border-t border-slate-200/60 pt-6 flex flex-col gap-2 bg-slate-50/60 backdrop-blur-md -mx-6 md:-mx-8 -mb-6 md:-mb-8 p-6 md:p-8 rounded-b-3xl">
+            <div class="flex justify-between items-center w-full">
+               <span class="text-md font-bold text-slate-500">Subtotal</span>
+               <span class="text-xl font-bold text-slate-700" id="cartSubtotalDisplay">Rs. 0.00</span>
+            </div>
+            <div class="flex justify-between items-center w-full border-b border-slate-200 pb-4 mb-1">
+               <span class="text-md font-bold text-slate-500">Courier Charge</span>
+               <span class="text-xl font-bold text-slate-700" id="cartDeliveryDisplay">Rs. 300.00</span>
+            </div>
+            <div class="flex justify-between items-end w-full pt-2">
+              <span class="text-lg font-bold text-slate-500">Grand Total</span>
+              <span class="text-4xl font-black drop-shadow-sm" style="color: var(--theme-text);" id="cartTotalDisplay">Rs. 0.00</span>
+            </div>
+          </div>
+          
+          <div class="mt-12">
+            <button onclick="window.proceedToCheckout()" class="w-full btn-gradient py-4 text-xl" id="checkoutBtnMain" disabled>Proceed to Checkout</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. CHECKOUT VIEW -->
+      <section id="view-checkout" class="view-content hidden max-w-xl mx-auto px-6 py-12">
+        <button onclick="window.showMainView('cart')" class="text-white/80 hover:text-white mb-6 flex items-center gap-2 font-semibold transition drop-shadow-md">
+          <span>&larr;</span> Back to Cart
+        </button>
+        
+        <div class="glass-card rounded-3xl p-8 relative overflow-hidden">
+          <div class="absolute -top-20 -right-20 w-40 h-40 rounded-full mix-blend-multiply filter blur-3xl opacity-50" style="background-color: var(--theme-from);"></div>
+          
+          <h2 class="text-3xl font-extrabold text-slate-800 mb-8">Delivery Details</h2>
+          
+          <div class="space-y-5 relative z-10">
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">Full Name</label>
+              <input id="chkName" placeholder="e.g. John Doe" class="input m-0 shadow-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">Phone Number (WhatsApp)</label>
+              <input id="chkPhone" placeholder="+94 77 XXX XXXX" class="input m-0 shadow-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">Delivery Address</label>
+              <textarea id="chkAddress" placeholder="House No, Street, City, ZIP" class="input m-0 resize-none h-28 shadow-sm"></textarea>
+            </div>
+          </div>
+
+          <div class="mt-8 bg-slate-50/80 backdrop-blur-md p-6 rounded-2xl border border-slate-100 relative z-10">
+            <div class="flex justify-between items-center mb-3">
+              <span class="text-slate-500 font-semibold">Items Count:</span>
+              <span class="font-bold text-slate-700 bg-white border border-slate-200 px-3 py-1 rounded-full shadow-sm" id="chkItemCount">0</span>
+            </div>
+            <div class="flex justify-between items-center mb-3">
+              <span class="text-slate-500 font-semibold">Courier Charge:</span>
+              <span class="font-bold text-slate-700 bg-amber-100 text-amber-700 border border-amber-200 px-3 py-1 rounded-full shadow-sm">Rs. 300.00</span>
+            </div>
+            <div class="flex justify-between items-center text-xl mt-4 border-t border-slate-200 pt-4">
+              <span class="font-bold text-slate-700">Total to Pay:</span>
+              <span class="font-black text-3xl" style="color: var(--theme-text);" id="chkTotalDisplay">Rs. 0.00</span>
+            </div>
+          </div>
+
+          <button onclick="window.placeOrderFinal()" class="w-full btn-gradient py-4 text-lg mt-8 relative z-10 flex justify-center items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            Confirm Order via Email
+          </button>
+        </div>
+      </section>
+
+      <!-- 5. ORDERS VIEW -->
+      <section id="view-orders" class="view-content hidden max-w-5xl mx-auto px-6 py-12">
+        <h2 class="text-4xl font-extrabold text-white drop-shadow-lg mb-2">Order History</h2>
+        <p class="text-slate-200 font-medium mb-10 drop-shadow-md">Track your recent purchases</p>
+        
+        <div id="ordersList" class="grid sm:grid-cols-2 gap-6">
+          <div class="col-span-full glass-card p-12 text-center rounded-3xl">
+            <p class="text-slate-500 text-lg">Fetching your orders...</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Product Details Modal (Hidden by default) -->
+    <div id="product-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 sm:p-6 opacity-0 transition-opacity duration-300">
+      <!-- Backdrop -->
+      <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm cursor-pointer" onclick="closeProductModal()"></div>
+      
+      <!-- Modal Content -->
+      <div class="glass-card w-full max-w-3xl relative z-10 rounded-3xl overflow-hidden shadow-2xl modal-animation flex flex-col md:flex-row max-h-[90vh]">
+        <!-- Close Button -->
+        <button onclick="closeProductModal()" class="absolute top-4 right-4 z-20 bg-black/20 hover:bg-black/40 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+
+        <!-- Left Image -->
+        <div class="w-full md:w-1/2 h-64 md:h-auto relative bg-white flex items-center justify-center p-6">
+          <img id="modal-img" src="" alt="Product" class="max-w-full max-h-full object-contain">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent md:hidden"></div>
+        </div>
+
+        <!-- Right Details -->
+        <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col bg-white overflow-y-auto">
+          <span id="modal-type" class="text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider w-max mb-3 border" style="color: var(--theme-text); background-color: var(--theme-bg-glow); border-color: var(--theme-bg-glow);">Type</span>
+          
+          <h2 id="modal-name" class="text-3xl font-extrabold text-slate-800 mb-2 leading-tight">Product Name</h2>
+          
+          <div id="modal-keywords" class="flex flex-wrap gap-1.5 mb-4">
+             <!-- Keywords injected here -->
+          </div>
+
+          <p id="modal-price" class="text-3xl font-black mb-6" style="color: var(--theme-text);">Rs. 0.00</p>
+          
+          <div class="mb-8 flex-grow">
+            <h4 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2 border-b border-slate-100 pb-2">Description</h4>
+            <p id="modal-desc" class="text-slate-600 font-medium leading-relaxed whitespace-pre-wrap">Description goes here...</p>
+          </div>
+
+          <!-- Add to Cart Action -->
+          <div class="mt-auto bg-slate-50 p-4 rounded-2xl border border-slate-100 flex items-center gap-4">
+             <button id="modal-add-btn" class="w-full btn-gradient py-3.5 text-lg shadow-lg flex justify-center items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                Add to Cart
+             </button>
+          </div>
+        </div>
       </div>
+    </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-        <!-- Default Theme -->
-        <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group cursor-pointer border-2 shadow-lg" id="theme-card-default" onclick="saveTheme('default')">
-          <div class="absolute top-4 right-4 hidden" id="check-default">
-            <span class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg flex items-center gap-1">✓ ACTIVE</span>
+    <!-- Footer -->
+    <footer class="glass-nav mt-auto z-10 relative">
+      <div class="max-w-7xl mx-auto px-6 py-10 flex flex-col md:flex-row justify-between items-center text-sm">
+        <div class="mb-6 md:mb-0 text-center md:text-left">
+          <div class="flex items-center gap-2 justify-center md:justify-start mb-3">
+             <img src="logo3.jpeg" alt="Growthwell" class="h-10 object-contain hover:scale-105 transition-transform">
           </div>
-          <div class="flex items-center gap-4 mb-4">
-            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-red-500 to-red-700 shadow-xl flex items-center justify-center text-2xl border-2 border-red-400/30">🐶</div>
-            <div>
-              <h3 class="text-xl font-extrabold text-white">Default Theme</h3>
-              <p class="text-xs text-slate-400 uppercase tracking-widest font-bold mt-1">Premium Red</p>
-            </div>
-          </div>
-          <div class="flex gap-2 mt-6 opacity-80">
-            <span class="bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-sm">🐶</span>
-            <span class="bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-sm">🐱</span>
-            <span class="bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-sm">🐾</span>
-            <span class="bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-sm">🦴</span>
-          </div>
+          <p class="text-slate-600 font-medium">Premium care for your best friend.</p>
         </div>
+        <div class="text-center md:text-right text-slate-600 space-y-2 font-medium">
+          <p class="transition cursor-pointer" onmouseover="this.style.color='var(--theme-text)'" onmouseout="this.style.color='inherit'">Email: growthwellku@gmail.com</p>
+          <p class="transition cursor-pointer" onmouseover="this.style.color='var(--theme-text)'" onmouseout="this.style.color='inherit'">Phone: 0729541518</p>
+          
+          <div class="flex justify-center md:justify-end gap-5 mt-4 mb-2">
+            <a href="https://web.facebook.com/profile.php?id=61550043197229" target="_blank" class="text-slate-400 hover:text-blue-600 transition-colors drop-shadow-sm hover:-translate-y-1 transform duration-300" title="Visit our Facebook Page">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd"></path>
+              </svg>
+            </a>
+            <a href="https://www.tiktok.com/@growthwell7?_r=1&_t=ZS-94pytCsoGi9" target="_blank" class="text-slate-400 hover:text-slate-900 transition-colors drop-shadow-sm hover:-translate-y-1 transform duration-300" title="Follow us on TikTok">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 448 512" aria-hidden="true">
+                <path d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z"/>
+              </svg>
+            </a>
+          </div>
 
-        <!-- Avurudu Theme -->
-        <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group cursor-pointer border-2 border-transparent hover:border-orange-500/50 shadow-lg" id="theme-card-avurudu" onclick="saveTheme('avurudu')">
-          <div class="absolute top-4 right-4 hidden" id="check-avurudu">
-            <span class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg flex items-center gap-1">✓ ACTIVE</span>
-          </div>
-          <div class="flex items-center gap-4 mb-4">
-            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-orange-400 to-yellow-500 shadow-xl flex items-center justify-center text-2xl border-2 border-orange-300/50">🌞</div>
-            <div>
-              <h3 class="text-xl font-extrabold text-white">Avurudu Season</h3>
-              <p class="text-xs text-slate-400 uppercase tracking-widest font-bold mt-1">Sinhala & Tamil New Year</p>
-            </div>
-          </div>
-          <div class="flex gap-2 mt-6 opacity-80">
-            <span class="bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-sm">🌞</span>
-            <span class="bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-sm">🥮</span>
-            <span class="bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-sm">🥨</span>
-            <span class="bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-sm">🍩</span>
-          </div>
+          <p class="mt-4 text-xs font-bold text-slate-500 uppercase tracking-widest">&copy; 2026 Growthwell. All rights reserved.</p>
         </div>
-
-        <!-- Vesak Theme -->
-        <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group cursor-pointer border-2 border-transparent hover:border-amber-400/50 shadow-lg" id="theme-card-vesak" onclick="saveTheme('vesak')">
-          <div class="absolute top-4 right-4 hidden" id="check-vesak">
-            <span class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg flex items-center gap-1">✓ ACTIVE</span>
-          </div>
-          <div class="flex items-center gap-4 mb-4">
-            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-amber-400 to-yellow-300 shadow-xl flex items-center justify-center text-2xl border-2 border-amber-300/50">🏮</div>
-            <div>
-              <h3 class="text-xl font-extrabold text-white">Vesak Festival</h3>
-              <p class="text-xs text-slate-400 uppercase tracking-widest font-bold mt-1">Festival of Light</p>
-            </div>
-          </div>
-          <div class="flex gap-2 mt-6 opacity-80">
-            <span class="bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-sm">🏮</span>
-            <span class="bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-sm">✨</span>
-            <span class="bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-sm">🌸</span>
-            <span class="bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-sm">🕊️</span>
-          </div>
-        </div>
-
-        <!-- Christmas Theme -->
-        <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group cursor-pointer border-2 border-transparent hover:border-blue-500/50 shadow-lg" id="theme-card-christmas" onclick="saveTheme('christmas')">
-          <div class="absolute top-4 right-4 hidden" id="check-christmas">
-            <span class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg flex items-center gap-1">✓ ACTIVE</span>
-          </div>
-          <div class="flex items-center gap-4 mb-4">
-            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 shadow-xl flex items-center justify-center text-2xl border-2 border-blue-400/50">🎄</div>
-            <div>
-              <h3 class="text-xl font-extrabold text-white">Christmas Season</h3>
-              <p class="text-xs text-slate-400 uppercase tracking-widest font-bold mt-1">Winter Blue</p>
-            </div>
-          </div>
-          <div class="flex gap-2 mt-6 opacity-80">
-            <span class="bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-sm">🎄</span>
-            <span class="bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-sm">❄️</span>
-            <span class="bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-sm">🎁</span>
-            <span class="bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-sm">🎅</span>
-          </div>
-        </div>
-
       </div>
-    </section>
-
-  </main>
+    </footer>
+  </div>
 
   <!-- Three.js Background Script -->
   <script>
@@ -384,6 +601,27 @@
     renderer.setPixelRatio(window.devicePixelRatio);
     canvas.appendChild(renderer.domElement);
 
+    // Background Dust Particles
+    const particlesGeometry = new THREE.BufferGeometry();
+    const particlesCount = 200; 
+    const posArray = new Float32Array(particlesCount * 3);
+    for(let i = 0; i < particlesCount * 3; i++) posArray[i] = (Math.random() - 0.5) * 20;
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    
+    const pMaterial = new THREE.PointsMaterial({
+        size: 0.05,
+        color: 0xffffff, 
+        transparent: true,
+        opacity: 0.5,
+        blending: THREE.AdditiveBlending
+    });
+    const particlesMesh = new THREE.Points(particlesGeometry, pMaterial);
+    scene.add(particlesMesh);
+    
+    // Falling / Floating Element Sprites
+    const sprites = [];
+    const spriteCount = window.innerWidth < 768 ? 12 : 25; 
+
     function createEmojiTexture(emoji) {
         const canvas = document.createElement('canvas');
         canvas.width = 128;
@@ -392,15 +630,12 @@
         ctx.font = '80px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.globalAlpha = 0.3; 
+        ctx.globalAlpha = 0.5; 
         ctx.fillText(emoji, 64, 64 + 10);
         return new THREE.CanvasTexture(canvas);
     }
 
-    const sprites = [];
-    const spriteCount = window.innerWidth < 768 ? 15 : 35;
-
-    function buildThreeJSScene(emojis, fall = false) {
+    window.rebuildThreeJS = function(emojis, fall = false) {
         sprites.forEach(s => scene.remove(s));
         sprites.length = 0;
 
@@ -420,6 +655,7 @@
             sprite.scale.set(scale, scale, 1);
 
             sprite.userData = {
+                // If fall is true, they slowly drop like snow/sweets
                 speedY: fall ? -(Math.random() * 0.015 + 0.01) : (Math.random() * 0.015 + 0.005),
                 sinSpeed: Math.random() * 0.02 + 0.01,
                 sinOffset: Math.random() * Math.PI * 2,
@@ -430,19 +666,15 @@
             scene.add(sprite);
             sprites.push(sprite);
         }
-    }
+    };
 
-    buildThreeJSScene(['🐶', '🐱', '🐾', '🦴'], false);
     camera.position.z = 5;
 
-    let mouseX = 0;
-    let mouseY = 0;
-
+    let mouseX = 0; let mouseY = 0;
     document.addEventListener('mousemove', (event) => {
         mouseX = (event.clientX / window.innerWidth) - 0.5;
         mouseY = (event.clientY / window.innerHeight) - 0.5;
     });
-    
     document.addEventListener('touchmove', (event) => {
         if(event.touches.length > 0) {
             mouseX = (event.touches[0].clientX / window.innerWidth) - 0.5;
@@ -451,16 +683,21 @@
     });
 
     const clock = new THREE.Clock();
-
     function animate() {
         requestAnimationFrame(animate);
         const elapsedTime = clock.getElapsedTime();
+        
+        particlesMesh.rotation.y = elapsedTime * 0.02;
+        particlesMesh.rotation.x = elapsedTime * 0.01;
+        particlesMesh.position.x += (mouseX * 0.5 - particlesMesh.position.x) * 0.05;
+        particlesMesh.position.y += (-mouseY * 0.5 - particlesMesh.position.y) * 0.05;
 
         sprites.forEach(sprite => {
             sprite.position.y += sprite.userData.speedY;
             const wobble = Math.sin(elapsedTime * sprite.userData.sinSpeed + sprite.userData.sinOffset) * 0.02;
             sprite.position.x += wobble + ((mouseX * sprite.userData.parallaxFactor + sprite.userData.initialX) - sprite.position.x) * 0.02;
-
+            
+            // Loop based on direction
             if (sprite.userData.speedY > 0 && sprite.position.y > 12) {
                 sprite.position.y = -12;
                 sprite.userData.initialX = (Math.random() - 0.5) * 30;
@@ -469,7 +706,6 @@
                 sprite.userData.initialX = (Math.random() - 0.5) * 30;
             }
         });
-
         renderer.render(scene, camera);
     }
     animate();
@@ -479,14 +715,12 @@
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
     });
-
-    window.rebuildThreeJS = buildThreeJSScene;
   </script>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, addDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDRYR3XxiopH0Nh1iJPC55k7i2fBhB8dzg",
@@ -496,87 +730,36 @@
       messagingSenderId: "379185657443",
       appId: "1:379185657443:web:0009cfb5dd19775f0eea56"
     };
-    
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'growthwell-shop';
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    let compressedImageBase64 = null;
-    let allProductsData = [];
-    window.editingProductId = null; // New state to track if we are editing
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) { loadData(); }
-    });
-
-    signInAnonymously(auth).catch(console.error);
-
-    // View switching
-    window.switchTab = (tab) => {
-      document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-view'));
-      
-      document.getElementById('view-' + tab).classList.remove('hidden');
-      document.getElementById('view-' + tab).classList.add('active-view');
-      
-      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-      const activeBtn = document.getElementById('tab-' + tab);
-      if(activeBtn) activeBtn.classList.add('active');
-      
-      document.getElementById('mobileNav').classList.add('hidden');
-      window.scrollTo(0,0);
-    };
+    let currentUserDoc = null;
+    let authUser = null;
+    let cart = [];
+    let allStoreProducts = [];
+    let currentCategoryFilter = 'All';
+    let announcementInterval = null;
 
     // --- THEME LOGIC ---
     const themeConfig = {
-      default: { c1: '#ef4444', c2: '#dc2626', badge: 'rgba(239,68,68,0.2)', text: '#f87171', emojis: ['🐶', '🐱', '🐾', '🦴'], fall: false },
-      avurudu: { c1: '#f97316', c2: '#eab308', badge: 'rgba(249,115,22,0.2)', text: '#fbbf24', emojis: ['🌞', '🥮', '🥨', '🍩', '🐶', '🐱'], fall: true },
-      vesak:   { c1: '#f59e0b', c2: '#fde047', badge: 'rgba(245,158,11,0.2)', text: '#fde047', emojis: ['🏮', '✨', '🌸', '🕊️', '🐶', '🐱'], fall: false },
-      christmas:{ c1: '#3b82f6', c2: '#0ea5e9', badge: 'rgba(59,130,246,0.2)',text: '#7dd3fc', emojis: ['🎄', '❄️', '🎁', '🎅', '🐶', '🐱'], fall: true }
+      default: { c1: '#ef4444', c2: '#dc2626', badge: 'rgba(239,68,68,0.1)', text: '#ef4444', emojis: ['🐶', '🐱', '🐾', '🦴'], fall: false },
+      avurudu: { c1: '#f97316', c2: '#eab308', badge: 'rgba(249,115,22,0.15)', text: '#f59e0b', emojis: ['🌞', '🥮', '🥨', '🍩', '🐶', '🐱'], fall: true },
+      vesak:   { c1: '#f59e0b', c2: '#fde047', badge: 'rgba(245,158,11,0.15)', text: '#eab308', emojis: ['🏮', '✨', '🌸', '🕊️', '🐶', '🐱'], fall: false },
+      christmas:{ c1: '#3b82f6', c2: '#0ea5e9', badge: 'rgba(59,130,246,0.15)',text: '#3b82f6', emojis: ['🎄', '❄️', '🎁', '🎅', '🐶', '🐱'], fall: true }
     };
 
-    window.saveTheme = async (themeName) => {
-      try {
-        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'global'), { theme: themeName }, { merge: true });
-      } catch (error) {
-        console.error(error);
-        alert("Failed to save theme.");
-      }
-    };
-
-    window.saveAnnouncement = async () => {
-      const msgRaw = document.getElementById('noticeMessage').value;
-      const notices = msgRaw.split('\n').map(n => n.trim()).filter(n => n.length > 0);
-      const isActive = document.getElementById('noticeActive').checked;
-      try {
-        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'global'), { notices: notices, showNotice: isActive }, { merge: true });
-        alert("Store announcements updated successfully!");
-      } catch (error) {
-        console.error(error);
-        alert("Failed to save announcements.");
-      }
-    };
-
-    function applyAdminTheme(themeName) {
+    function applySiteTheme(themeName) {
       const t = themeConfig[themeName] || themeConfig.default;
       document.documentElement.style.setProperty('--theme-from', t.c1);
       document.documentElement.style.setProperty('--theme-to', t.c2);
-      document.documentElement.style.setProperty('--theme-badge', t.badge);
+      document.documentElement.style.setProperty('--theme-bg-glow', t.badge);
       document.documentElement.style.setProperty('--theme-text', t.text);
-      window.rebuildThreeJS(t.emojis, t.fall);
+      if(window.rebuildThreeJS) window.rebuildThreeJS(t.emojis, t.fall);
 
-      // Update UI selection cards
-      document.querySelectorAll('[id^="check-"]').forEach(el => el.classList.add('hidden'));
-      document.querySelectorAll('[id^="theme-card-"]').forEach(el => el.style.borderColor = 'transparent');
-      
-      const checkEl = document.getElementById('check-' + themeName);
-      const cardEl = document.getElementById('theme-card-' + themeName);
-      if(checkEl) checkEl.classList.remove('hidden');
-      if(cardEl) cardEl.style.borderColor = t.c1;
-
-      // Update Dynamic Logo Decorations
+      // Toggle Logo Animations
       document.getElementById('dec-christmas').classList.add('hidden');
       document.getElementById('dec-vesak').classList.add('hidden');
       document.getElementById('dec-avurudu').classList.add('hidden');
@@ -586,276 +769,403 @@
       if (themeName === 'avurudu') document.getElementById('dec-avurudu').classList.remove('hidden');
     }
 
-    // Load Image
-    window.clearImage = () => {
-        document.getElementById('pImageFile').value = '';
-        document.getElementById('previewContainer').classList.add('hidden');
-        document.getElementById('imgPreview').src = '';
-        compressedImageBase64 = null;
-    };
+    // --- Authentication Flow ---
+    signInAnonymously(auth).catch(e => console.error("Auth init failed:", e));
 
-    document.getElementById('pImageFile').addEventListener('change', function(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-          const canvas = document.createElement('canvas');
-          const MAX_WIDTH = 600; const MAX_HEIGHT = 600;
-          let width = img.width; let height = img.height;
-
-          if (width > height) {
-            if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-          } else {
-            if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
-          }
-          canvas.width = width; canvas.height = height;
-
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
-          compressedImageBase64 = canvas.toDataURL('image/jpeg', 0.6);
-          
-          document.getElementById('imgPreview').src = compressedImageBase64;
-          document.getElementById('previewContainer').classList.remove('hidden');
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        authUser = user;
+        const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', user.uid);
+        const userSnap = await getDoc(userRef);
+        
+        if (userSnap.exists()) {
+          currentUserDoc = userSnap.data();
+        } else {
+          currentUserDoc = { uid: user.uid, firstName: "", phone: "", isGuest: true };
+          await setDoc(userRef, currentUserDoc);
+        }
+        window.showMainView('home');
+      }
     });
 
-    window.addProduct = async () => {
-      const name = document.getElementById('pName').value.trim();
-      const price = document.getElementById('pPrice').value;
-      const typeRaw = document.getElementById('pType').value;
-      const keywordsRaw = document.getElementById('pKeywords').value;
-      const desc = document.getElementById('pDesc').value.trim();
-      const image = compressedImageBase64 || 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=400&q=80';
-      const btn = document.getElementById('addBtn');
+    window.showMainView = (viewId) => {
+      document.querySelectorAll('.view-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById('view-' + viewId).classList.remove('hidden');
+      window.scrollTo(0,0);
+      
+      if(viewId === 'home') loadProductsFromDB();
+      if(viewId === 'orders') loadOrders();
+      if(viewId === 'cart') renderCartUI();
+    };
 
-      if(!name || !price) return alert("Please enter product name and price.");
+    window.setFilter = (category, btnElement) => {
+      currentCategoryFilter = category;
+      document.querySelectorAll('.cat-pill').forEach(el => el.classList.remove('active'));
+      btnElement.classList.add('active');
+      window.renderStoreProducts();
+    };
 
-      const type = typeRaw.replace(/[^a-zA-Z]/g, '').trim();
-      const keywords = keywordsRaw.split(',').map(k => k.trim().toLowerCase()).filter(k => k.length > 0);
+    async function loadProductsFromDB() {
+      if(!authUser) return;
+      
+      // Load global theme and announcement
+      const settingsQuery = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'global');
+      onSnapshot(settingsQuery, (snap) => {
+          if(snap.exists()) {
+              const data = snap.data();
+              applySiteTheme(data.theme || 'default');
+              
+              // Store Announcement Logic
+              clearInterval(announcementInterval);
+              const noticeBanner = document.getElementById('announcement-banner');
+              const noticeText = document.getElementById('announcement-text');
+              
+              let noticesArray = [];
+              if(data.notices && data.notices.length > 0) noticesArray = data.notices;
+              else if(data.notice) noticesArray = [data.notice];
 
-      btn.disabled = true;
+              if(data.showNotice && noticesArray.length > 0) {
+                  noticeBanner.classList.remove('hidden');
+                  let currentIndex = 0;
+                  
+                  const updateText = () => {
+                      noticeText.classList.remove('opacity-100');
+                      noticeText.classList.add('opacity-0');
+                      setTimeout(() => {
+                          noticeText.innerText = noticesArray[currentIndex];
+                          noticeText.classList.remove('opacity-0');
+                          noticeText.classList.add('opacity-100');
+                          currentIndex = (currentIndex + 1) % noticesArray.length;
+                      }, 500); 
+                  };
+                  
+                  updateText(); 
+                  if(noticesArray.length > 1) {
+                      announcementInterval = setInterval(updateText, 5000); 
+                  }
+              } else {
+                  noticeBanner.classList.add('hidden');
+              }
+          } else {
+              applySiteTheme('default');
+          }
+      });
 
-      try {
-        const prodData = { name, price: parseFloat(price), type, keywords, description: desc, image };
-        
-        if (window.editingProductId) {
-          btn.innerHTML = `Updating...`;
-          await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', window.editingProductId), prodData);
-          alert("Product updated successfully!");
-        } else {
-          btn.innerHTML = `Publishing...`;
-          prodData.createdAt = new Date().toISOString();
-          await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), prodData);
-          alert("Product published successfully!");
-        }
-        
-        document.getElementById('pName').value = '';
-        document.getElementById('pPrice').value = '';
-        document.getElementById('pKeywords').value = '';
-        document.getElementById('pDesc').value = '';
-        document.getElementById('pType').value = 'All';
-        clearImage();
-        window.editingProductId = null;
-        
-      } catch (e) {
-        console.error(e);
-        alert("Error saving product.");
-      } finally {
-        btn.innerHTML = `<svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg> Publish Product`;
-        btn.disabled = false;
+      const q = collection(db, 'artifacts', appId, 'public', 'data', 'products');
+      onSnapshot(q, (snap) => {
+        allStoreProducts = [];
+        snap.forEach(doc => allStoreProducts.push({ id: doc.id, ...doc.data() }));
+        allStoreProducts.sort((a,b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+        window.renderStoreProducts();
+      });
+    }
+
+    // --- Product Modal Logic ---
+    window.openProductModal = (id) => {
+      const p = allStoreProducts.find(x => x.id === id);
+      if(!p) return;
+      
+      document.getElementById('modal-img').src = p.image || 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=80';
+      document.getElementById('modal-name').innerText = p.name;
+      document.getElementById('modal-price').innerText = `Rs. ${parseFloat(p.price).toFixed(2)}`;
+      document.getElementById('modal-desc').innerText = p.description || 'No detailed description available for this premium product.';
+      
+      const typeBadge = document.getElementById('modal-type');
+      if(p.type && p.type !== 'All') {
+          typeBadge.innerText = p.type;
+          typeBadge.classList.remove('hidden');
+      } else {
+          typeBadge.classList.add('hidden');
       }
-    };
-    
-    window.editProduct = (id) => {
-        const p = allProductsData.find(x => x.id === id);
-        if(!p) return;
-        
-        document.getElementById('pName').value = p.name || '';
-        document.getElementById('pPrice').value = p.price || '';
-        document.getElementById('pType').value = p.type || 'All';
-        document.getElementById('pKeywords').value = (p.keywords || []).join(', ');
-        document.getElementById('pDesc').value = p.description || '';
-        
-        if(p.image && !p.image.includes('unsplash.com')) {
-            compressedImageBase64 = p.image;
-            document.getElementById('imgPreview').src = p.image;
-            document.getElementById('previewContainer').classList.remove('hidden');
-        } else {
-            clearImage();
-        }
-        
-        window.editingProductId = id;
-        const btn = document.getElementById('addBtn');
-        btn.innerHTML = `<svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> Update Product`;
-        
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
 
-    window.deleteProduct = async (id) => {
-      if(confirm("Are you sure you want to permanently delete this product?")) {
-        try {
-          await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', id));
-        } catch(e) { console.error(e); alert("Error deleting product!"); }
+      const keywordsContainer = document.getElementById('modal-keywords');
+      if(p.keywords && p.keywords.length > 0) {
+          keywordsContainer.innerHTML = p.keywords.map(k => `<span class="bg-slate-100 text-slate-500 text-[10px] font-bold px-2 py-0.5 rounded border border-slate-200 uppercase tracking-wider">#${k}</span>`).join('');
+      } else {
+          keywordsContainer.innerHTML = '';
       }
-    };
-    
-    window.deleteOrder = async (id) => {
-      if(confirm("Are you sure you want to permanently delete this order?")) {
-        try {
-          await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'orders', id));
-        } catch(e) { console.error(e); alert("Error deleting order!"); }
-      }
+
+      // Overwrite onClick for the Add to Cart button in Modal
+      document.getElementById('modal-add-btn').onclick = () => {
+         window.addToCartById(p.id);
+         closeProductModal();
+      };
+
+      const modal = document.getElementById('product-modal');
+      modal.classList.remove('hidden');
+      // slight delay to allow display:block to apply before animating opacity
+      setTimeout(() => { modal.classList.remove('opacity-0'); }, 10);
+      document.body.style.overflow = 'hidden'; // prevent background scrolling
     };
 
-    window.renderProducts = () => {
-      const searchTerm = document.getElementById('searchProduct').value.toLowerCase();
-      const filterTypeRaw = document.getElementById('filterPetType').value;
-      const filterType = filterTypeRaw.replace(/[^a-zA-Z]/g, '').trim();
-      const list = document.getElementById('adminProductList');
-      list.innerHTML = '';
+    window.closeProductModal = () => {
+      const modal = document.getElementById('product-modal');
+      modal.classList.add('opacity-0');
+      setTimeout(() => { 
+          modal.classList.add('hidden'); 
+          document.body.style.overflow = '';
+      }, 300);
+    };
 
-      let filtered = allProductsData.filter(p => {
+
+    window.renderStoreProducts = () => {
+      const list = document.getElementById("productList");
+      const searchTerm = document.getElementById('storeSearch').value.toLowerCase();
+      
+      list.innerHTML = "";
+      
+      let filtered = allStoreProducts.filter(p => {
          const matchSearch = p.name.toLowerCase().includes(searchTerm) || (p.keywords && p.keywords.some(k => k.includes(searchTerm)));
-         const matchType = filterType === 'All' || p.type === filterType;
+         const matchType = currentCategoryFilter === 'All' || p.type === currentCategoryFilter;
          return matchSearch && matchType;
       });
 
-      if(filtered.length === 0) {
-        list.innerHTML = '<div class="p-8 text-center text-slate-500">No products found matching your criteria.</div>';
-        return;
+      if(filtered.length === 0) { 
+          list.innerHTML = `<div class="col-span-full text-center py-20"><div class="text-6xl mb-4 opacity-50 grayscale filter drop-shadow-md">🔍</div><p class="text-white drop-shadow-md text-lg font-medium">No products found matching your search.</p></div>`; 
+          return; 
       }
-
+      
       filtered.forEach(p => {
-        let typeBadge = p.type && p.type !== 'All' ? `<span class="text-[10px] px-2 py-0.5 rounded uppercase tracking-wider font-bold whitespace-nowrap" style="color:var(--theme-text); background-color:var(--theme-badge);">${p.type}</span>` : '';
+        let typeBadge = p.type && p.type !== 'All' ? `<span class="absolute top-4 left-4 bg-white/90 backdrop-blur-md text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border border-slate-100" style="color: var(--theme-text);">${p.type}</span>` : '';
         
         list.innerHTML += `
-          <div class="flex items-center justify-between bg-slate-800/40 p-3 md:p-4 rounded-xl border border-slate-700/50 hover:border-slate-500 transition group gap-3">
-            <div class="flex items-center gap-3 overflow-hidden flex-grow">
-              <img src="${p.image}" class="w-14 h-14 md:w-16 md:h-16 shrink-0 object-contain bg-white p-1 rounded-lg border border-slate-600 transition shadow-md">
-              <div class="flex flex-col min-w-0">
-                <p class="font-bold text-white text-sm md:text-base truncate pr-2">${p.name}</p>
-                <div class="flex items-center gap-2 mt-1 flex-wrap">
-                  ${typeBadge}
-                  <p class="font-extrabold text-sm whitespace-nowrap" style="color:var(--theme-text);">Rs. ${parseFloat(p.price).toFixed(2)}</p>
-                </div>
+          <div onclick="window.openProductModal('${p.id}')" class="glass-card rounded-3xl hover:-translate-y-2 transition-all duration-300 overflow-hidden flex flex-col h-full group hover:shadow-2xl border border-slate-200 cursor-pointer" onmouseover="this.style.borderColor='var(--theme-from)'; this.style.boxShadow='0 10px 40px -10px var(--theme-bg-glow)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.5)'; this.style.boxShadow='0 10px 40px -10px rgba(0,0,0,0.2)'">
+            <div class="h-56 relative overflow-hidden bg-white flex items-center justify-center p-4">
+              <img src="${p.image || 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=400&q=80'}" class="max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-110">
+              ${typeBadge}
+              <div class="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-white to-transparent"></div>
+            </div>
+            <div class="p-6 flex flex-col flex-grow bg-white z-10 relative">
+              <h4 class="font-extrabold text-xl text-slate-800 line-clamp-2 mb-2 transition-colors" onmouseover="this.style.color='var(--theme-text)'" onmouseout="this.style.color='#1e293b'">${p.name}</h4>
+              <p class="text-sm text-slate-500 mb-6 line-clamp-2 flex-grow font-medium">${p.description || ''}</p>
+              <div class="mt-auto flex items-center justify-between">
+                <p class="font-black text-2xl" style="color: var(--theme-text);">Rs. ${parseFloat(p.price).toFixed(2)}</p>
+                <button onclick="event.stopPropagation(); window.addToCartById('${p.id}')" class="btn-gradient p-3.5 rounded-2xl transition shadow-sm hover:scale-105 active:scale-95" title="Add to Cart">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                </button>
               </div>
             </div>
-            <div class="flex gap-2 shrink-0">
-              <button onclick="editProduct('${p.id}')" class="shrink-0 text-blue-400 hover:text-white bg-slate-700/50 hover:bg-blue-500 border border-slate-600 hover:border-blue-500 p-2 md:px-4 md:py-2 rounded-lg md:rounded-xl text-xs font-bold transition flex items-center justify-center">
-                <span class="md:inline">Edit</span>
-              </button>
-              <button onclick="deleteProduct('${p.id}')" class="shrink-0 text-slate-400 hover:text-white bg-slate-700/50 hover:bg-red-500 border border-slate-600 hover:border-red-500 p-2 md:px-4 md:py-2 rounded-lg md:rounded-xl text-xs font-bold transition flex items-center justify-center">
-                <span class="md:inline">Delete</span>
-              </button>
-            </div>
-          </div>
-        `;
+          </div>`;
       });
     };
 
-    function loadData() {
-        // Listen to Theme and Settings
-        const settingsQuery = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'global');
-        onSnapshot(settingsQuery, (snap) => {
-            if(snap.exists()) {
-                const data = snap.data();
-                applyAdminTheme(data.theme || 'default');
-                
-                let noticesText = "";
-                if(data.notices && data.notices.length > 0) noticesText = data.notices.join('\n');
-                else if(data.notice) noticesText = data.notice; // Backwards compatibility
-                
-                document.getElementById('noticeMessage').value = noticesText;
-                document.getElementById('noticeActive').checked = !!data.showNotice;
-            } else {
-                applyAdminTheme('default');
-            }
-        });
-
-        // Listen to products
-        const pQuery = collection(db, 'artifacts', appId, 'public', 'data', 'products');
-        onSnapshot(pQuery, (snap) => {
-          allProductsData = [];
-          snap.forEach(d => allProductsData.push({id: d.id, ...d.data()}));
-          allProductsData.sort((a,b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-          renderProducts();
-        }, (err) => console.error(err));
-
-        // Listen to orders
-        const oQuery = collection(db, 'artifacts', appId, 'public', 'data', 'orders');
-        onSnapshot(oQuery, (snap) => {
-          const list = document.getElementById('adminOrdersList');
-          list.innerHTML = '';
-          if(snap.empty) {
-            list.innerHTML = '<div class="glass-panel p-10 rounded-2xl text-center text-slate-500 border border-slate-700/50">No orders received yet.</div>';
-            return;
-          }
-
-          let ordersArray = [];
-          snap.forEach(d => ordersArray.push({ id: d.id, ...d.data() }));
-          ordersArray.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-          ordersArray.forEach(o => {
-            let itemsHtml = o.items.map(i => `<span class="bg-slate-700/50 text-slate-300 text-xs px-2.5 py-1 rounded border border-slate-600 mr-2 mb-2 inline-flex items-center gap-1">${i.name} <strong style="color:var(--theme-text);">x${i.qty}</strong></span>`).join('');
-            
-            let isPending = o.status === 'Pending';
-            let btnClass = isPending ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white' : 'bg-slate-700 hover:bg-slate-600 border border-slate-600 text-white';
-            let btnText = isPending ? 'Approve Order' : 'Revert to Pending';
-            let statusBadge = isPending ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
-
-            list.innerHTML += `
-              <div class="glass-panel p-4 md:p-6 rounded-2xl border border-slate-700/50 flex flex-col md:flex-row justify-between items-start md:items-center gap-5 hover:border-slate-500 transition w-full">
-                <div class="flex-grow w-full min-w-0">
-                  <div class="flex items-center gap-2 md:gap-3 mb-4 flex-wrap">
-                    <span class="font-extrabold text-lg md:text-xl text-white truncate">#${o.orderId}</span>
-                    <span class="text-[10px] md:text-xs text-slate-400 bg-slate-800 px-2 md:px-3 py-1 md:py-1.5 rounded-lg border border-slate-700 whitespace-nowrap">${o.createdAt}</span>
-                    <span class="text-[10px] md:text-xs px-2 md:px-3 py-1 md:py-1.5 rounded-full font-bold border uppercase tracking-wider ${statusBadge} whitespace-nowrap">${o.status}</span>
-                  </div>
-                  
-                  <div class="text-xs md:text-sm text-slate-300 mb-4 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 bg-slate-800/40 p-3 md:p-4 rounded-xl border border-slate-700/50">
-                    <p class="truncate">👤 ${o.customerName}</p>
-                    <p class="truncate">📞 ${o.customerPhone}</p>
-                    <p class="sm:col-span-2">📍 <span class="leading-relaxed break-words">${o.customerAddress}</span></p>
-                  </div>
-                  
-                  <div class="flex flex-wrap">
-                    ${itemsHtml}
-                  </div>
-                </div>
-                
-                <div class="flex flex-row md:flex-col justify-between items-center md:items-end gap-3 md:min-w-[200px] shrink-0 w-full md:w-auto border-t md:border-t-0 border-slate-700/50 pt-4 md:pt-0">
-                  <div class="text-left md:text-right w-full md:w-auto">
-                    <p class="text-[10px] md:text-xs text-slate-500 uppercase tracking-wider font-bold mb-0.5 md:mb-1">Total</p>
-                    <span class="font-black text-xl md:text-3xl" style="color:var(--theme-text);">Rs. ${parseFloat(o.totalAmount).toFixed(2)}</span>
-                  </div>
-                  <div class="flex gap-2 w-full justify-end mt-1 md:mt-2">
-                      <button onclick="updateOrderStatus('${o.id}', '${o.status}')" class="${btnClass} flex-grow md:flex-grow-0 md:w-full px-3 md:px-5 py-2.5 md:py-3 rounded-lg md:rounded-xl text-xs md:text-sm font-bold transition shadow-lg shrink min-w-0 truncate">
-                        ${btnText}
-                      </button>
-                      <button onclick="deleteOrder('${o.id}')" class="bg-slate-700 hover:bg-red-500 text-slate-400 hover:text-white border border-slate-600 hover:border-red-500 px-3 py-2.5 md:py-3 rounded-lg md:rounded-xl transition shadow-lg shrink-0 flex items-center justify-center">
-                        <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                      </button>
-                  </div>
-                </div>
-              </div>
-            `;
-          });
-        }, (err) => console.error(err));
-    }
-
-    window.updateOrderStatus = async (orderIdDoc, currentStatus) => {
-        const newStatus = currentStatus === "Pending" ? "Approved" : "Pending";
-        try {
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'orders', orderIdDoc), { status: newStatus });
-        } catch(e) { console.error(e); alert("Failed to update status!"); }
+    // --- CART LOGIC ---
+    window.addToCartById = (id) => {
+        const prod = allStoreProducts.find(p => p.id === id);
+        if(prod) window.addToCart(prod);
     };
 
+    window.addToCart = (prod) => {
+      const existing = cart.find(item => item.id === prod.id);
+      if(existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({...prod, qty: 1});
+      }
+      updateCartBadge();
+      
+      const toast = document.createElement('div');
+      toast.className = 'fixed bottom-8 right-8 bg-white border border-slate-200 text-slate-800 px-6 py-4 rounded-2xl shadow-2xl z-50 flex items-center gap-4 transform transition-all duration-300 translate-y-10 opacity-0';
+      toast.innerHTML = `<div class="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center font-bold text-xl">✓</div> <div><p class="font-bold text-sm text-slate-800">${prod.name}</p><p class="text-xs text-slate-500 font-medium">Added to your cart</p></div>`;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => toast.classList.remove('translate-y-10', 'opacity-0'), 10);
+      setTimeout(() => { toast.classList.add('opacity-0', 'translate-y-10'); setTimeout(() => toast.remove(), 300); }, 3000);
+    };
+
+    function updateCartBadge() {
+      const count = cart.reduce((acc, item) => acc + item.qty, 0);
+      const badge = document.getElementById('cartCount');
+      badge.innerText = count;
+      if(count > 0) {
+        badge.classList.remove('hidden');
+        badge.classList.add('animate-bounce');
+        setTimeout(()=> badge.classList.remove('animate-bounce'), 1000);
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    window.updateQty = (id, change) => {
+      const index = cart.findIndex(item => item.id === id);
+      if(index !== -1) {
+        cart[index].qty += change;
+        if(cart[index].qty <= 0) cart.splice(index, 1);
+        updateCartBadge();
+        renderCartUI();
+      }
+    };
+
+    window.removeFromCart = (id) => {
+      cart = cart.filter(item => item.id !== id);
+      updateCartBadge();
+      renderCartUI();
+    };
+
+    function renderCartUI() {
+      const list = document.getElementById("cartItemsList");
+      let subtotal = 0;
+      const DELIVERY_FEE = 300;
+      
+      if(cart.length === 0) {
+        list.innerHTML = `<div class="text-center py-16"><div class="text-7xl mb-6 opacity-30 grayscale filter drop-shadow-sm">🛍️</div><p class="text-slate-500 text-lg font-medium">Your cart is feeling light.</p><button onclick="window.showMainView('home')" class="mt-6 font-bold hover:underline" style="color: var(--theme-text);">Go discover products</button></div>`;
+        document.getElementById("cartSubtotalDisplay").innerText = "Rs. 0.00";
+        document.getElementById("cartTotalDisplay").innerText = "Rs. 0.00";
+        document.getElementById("checkoutBtnMain").disabled = true;
+        return;
+      }
+
+      document.getElementById("checkoutBtnMain").disabled = false;
+      list.innerHTML = "";
+      
+      cart.forEach(item => {
+        subtotal += (item.price * item.qty);
+        list.innerHTML += `
+          <div class="flex items-center gap-4 bg-white/80 p-4 rounded-2xl border border-slate-200 transition" onmouseover="this.style.borderColor='var(--theme-from)'" onmouseout="this.style.borderColor='#e2e8f0'">
+            <img src="${item.image}" class="w-24 h-24 object-contain bg-white p-2 rounded-xl border border-slate-100">
+            <div class="flex-grow">
+              <h4 class="font-bold text-slate-800 text-lg leading-tight mb-1">${item.name}</h4>
+              <p class="font-bold" style="color: var(--theme-text);">Rs. ${parseFloat(item.price).toFixed(2)}</p>
+            </div>
+            <div class="flex items-center bg-slate-50 rounded-xl border border-slate-200 overflow-hidden">
+              <button onclick="window.updateQty('${item.id}', -1)" class="w-10 h-10 flex items-center justify-center text-slate-500 font-bold transition hover:bg-slate-200">-</button>
+              <span class="w-10 text-center font-bold text-slate-800">${item.qty}</span>
+              <button onclick="window.updateQty('${item.id}', 1)" class="w-10 h-10 flex items-center justify-center text-slate-500 font-bold transition hover:bg-slate-200">+</button>
+            </div>
+            <button onclick="window.removeFromCart('${item.id}')" class="p-3 rounded-xl transition ml-2 border" style="color: var(--theme-text); background-color: var(--theme-bg-glow); border-color: var(--theme-bg-glow);" onmouseover="this.style.backgroundColor='var(--theme-from)'; this.style.color='white';" onmouseout="this.style.backgroundColor='var(--theme-bg-glow)'; this.style.color='var(--theme-text)';">
+               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+            </button>
+          </div>
+        `;
+      });
+      
+      let grandTotal = subtotal + DELIVERY_FEE;
+
+      document.getElementById("cartSubtotalDisplay").innerText = `Rs. ${subtotal.toFixed(2)}`;
+      document.getElementById("cartTotalDisplay").innerText = `Rs. ${grandTotal.toFixed(2)}`;
+      document.getElementById("chkTotalDisplay").innerText = `Rs. ${grandTotal.toFixed(2)}`;
+      document.getElementById("chkItemCount").innerText = cart.reduce((a,b)=>a+b.qty,0);
+      
+      if(currentUserDoc) {
+        document.getElementById("chkName").value = currentUserDoc.firstName || '';
+        document.getElementById("chkPhone").value = currentUserDoc.phone || '';
+      }
+    }
+
+    window.proceedToCheckout = () => { window.showMainView('checkout'); };
+
+    // --- PLACE ORDER & SEND EMAIL ---
+    window.placeOrderFinal = async () => {
+      const name = document.getElementById("chkName").value.trim();
+      const phone = document.getElementById("chkPhone").value.trim();
+      const address = document.getElementById("chkAddress").value.trim();
+
+      if(!name || !phone || !address) return alert("Please fill in all delivery details.");
+
+      let subtotal = 0; 
+      const DELIVERY_FEE = 300;
+      let orderItemsText = ""; 
+      let orderItemsDB = [];
+      
+      cart.forEach(item => {
+        subtotal += (item.price * item.qty);
+        orderItemsText += `🐾 ${item.name} (x${item.qty}) = Rs.${(item.price * item.qty).toFixed(2)}\n`;
+        orderItemsDB.push({ id: item.id, name: item.name, price: item.price, qty: item.qty });
+      });
+
+      let total = subtotal + DELIVERY_FEE;
+      const orderId = "ORD-" + Math.random().toString(36).substr(2, 6).toUpperCase();
+      const dateStr = new Date().toLocaleString();
+
+      const emailSubject = `🌟 New Order Received! | ID: ${orderId} 🌟`;
+      const emailBody = `
+🎉 A NEW ORDER HAS ARRIVED! 🎉
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📦 ORDER SUMMARY
+🛒 Order ID     : ${orderId}
+📅 Date & Time  : ${dateStr}
+
+👤 CUSTOMER DETAILS
+📛 Name    : ${name}
+📞 Phone   : ${phone}
+📍 Address : ${address}
+
+🛍️ ITEMS ORDERED
+${orderItemsText}
+🚚 Courier Charge : Rs. 300.00
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💰 GRAND TOTAL    : Rs. ${total.toFixed(2)}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ Thank you for choosing Growthwell! Have a pawsome day! 🐾
+`;
+
+      try {
+        const orderData = { orderId, customerName: name, customerPhone: phone, customerAddress: address, customerUid: authUser ? authUser.uid : "guest", items: orderItemsDB, totalAmount: total, status: "Pending", createdAt: dateStr };
+        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'orders'), orderData);
+        
+        if(authUser && currentUserDoc) {
+           await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', authUser.uid), { firstName: name, phone: phone });
+           currentUserDoc.firstName = name; currentUserDoc.phone = phone;
+        }
+
+        cart = []; updateCartBadge();
+        
+        const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=growthwellku@gmail.com&su=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+        window.open(gmailLink, '_blank');
+
+        alert("Order placed successfully! Redirecting to Gmail...");
+        window.showMainView('orders');
+
+      } catch (error) { console.error("Order error:", error); alert("Error processing your order."); }
+    };
+
+    async function loadOrders() {
+      if(!authUser) return;
+      const list = document.getElementById("ordersList");
+      const uidToSearch = authUser.uid;
+      
+      const q = collection(db, 'artifacts', appId, 'public', 'data', 'orders');
+      onSnapshot(q, (snap) => {
+        list.innerHTML = "";
+        
+        let localOrders = [];
+        snap.forEach(d => {
+          if(d.data().customerUid === uidToSearch) localOrders.push(d.data());
+        });
+        localOrders.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        if(localOrders.length === 0) {
+           list.innerHTML = `<div class="col-span-full glass-card p-16 rounded-3xl text-center border border-slate-200"><p class="text-slate-500 text-lg mb-4 font-medium">You haven't placed any orders yet.</p><button onclick="window.showMainView('home')" class="btn-gradient">Start Shopping</button></div>`;
+           return;
+        }
+
+        localOrders.forEach(o => {
+          let isPending = o.status === 'Pending';
+          let statusColor = isPending ? "bg-amber-100 text-amber-700 border-amber-200" : "bg-emerald-100 text-emerald-700 border-emerald-200";
+          let itemsHtml = o.items.map(i => `<li class="text-sm text-slate-600 py-1.5 flex justify-between font-medium"><span>${i.name} <span class="text-slate-400 mx-1">x</span> <span class="font-bold text-slate-800">${i.qty}</span></span></li>`).join('');
+          
+          list.innerHTML += `
+            <div class="glass-card p-6 md:p-8 rounded-3xl border border-slate-200 transition shadow-lg bg-white/90" onmouseover="this.style.borderColor='var(--theme-from)'" onmouseout="this.style.borderColor='#e2e8f0'">
+              <div class="flex justify-between items-start mb-6">
+                <div>
+                  <span class="text-xs text-slate-500 block mb-1 font-mono font-bold">${o.createdAt}</span>
+                  <span class="font-black text-slate-800 text-2xl">#${o.orderId}</span>
+                </div>
+                <span class="text-xs px-3 py-1.5 rounded-full font-bold border uppercase tracking-widest shadow-sm ${statusColor}">${o.status}</span>
+              </div>
+              <div class="border-t border-b border-slate-100 py-4 mb-4">
+                <ul class="divide-y divide-slate-50">${itemsHtml}</ul>
+              </div>
+              <div class="flex justify-between items-end">
+                <span class="text-sm font-bold text-slate-500 uppercase tracking-widest">Total</span>
+                <span class="font-black text-3xl" style="color: var(--theme-text);">Rs. ${o.totalAmount.toFixed(2)}</span>
+              </div>
+            </div>`;
+        });
+      }, (error) => { console.error(error); list.innerHTML = "<p class='col-span-full text-center text-red-500 font-bold'>Error loading orders.</p>"; });
+    }
   </script>
 </body>
 </html>
