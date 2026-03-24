@@ -164,6 +164,12 @@
             <button onclick="window.showMainView('home')" class="text-sm font-bold text-white btn-gradient px-5 py-2.5 rounded-full shadow-lg transition-all hover:-translate-y-0.5">Home</button>
             <button onclick="window.showMainView('about')" class="text-sm font-bold text-white btn-gradient px-5 py-2.5 rounded-full shadow-lg transition-all hover:-translate-y-0.5">About Us</button>
             <button onclick="window.showMainView('orders')" class="text-sm font-bold text-white btn-gradient px-5 py-2.5 rounded-full shadow-lg transition-all hover:-translate-y-0.5">My Orders</button>
+            
+            <!-- NEW: Install App Button (Desktop) -->
+            <button id="installAppBtn" class="hidden text-sm font-bold bg-slate-800 text-white px-5 py-2.5 rounded-full shadow-lg transition-all hover:-translate-y-0.5 flex items-center gap-2 border border-slate-600">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              Install App
+            </button>
           </div>
           
           <button onclick="window.showMainView('cart')" class="relative p-2.5 text-white btn-gradient rounded-full shadow-lg transition-all hover:-translate-y-0.5 flex items-center justify-center">
@@ -182,6 +188,12 @@
         <button onclick="window.showMainView('home'); this.parentElement.classList.add('hidden')" class="w-full text-center font-bold text-white btn-gradient px-4 py-3 rounded-xl shadow-lg text-lg transition-all active:scale-95">Home</button>
         <button onclick="window.showMainView('about'); this.parentElement.classList.add('hidden')" class="w-full text-center font-bold text-white btn-gradient px-4 py-3 rounded-xl shadow-lg text-lg transition-all active:scale-95">About Us</button>
         <button onclick="window.showMainView('orders'); this.parentElement.classList.add('hidden')" class="w-full text-center font-bold text-white btn-gradient px-4 py-3 rounded-xl shadow-lg text-lg transition-all active:scale-95">My Orders</button>
+        
+        <!-- NEW: Install App Button (Mobile) -->
+        <button id="mobileInstallBtn" class="hidden w-full text-center font-bold bg-slate-800 text-white px-4 py-3 rounded-xl shadow-lg text-lg transition-all active:scale-95 flex justify-center items-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+          Install App
+        </button>
       </div>
     </header>
 
@@ -192,12 +204,14 @@
       <section id="view-home" class="view-content active-view">
         
         <!-- MAIN ADVERTISEMENT CAROUSEL (Slider) -->
-        <div id="adCarouselContainer" class="hidden relative w-full bg-slate-900 overflow-hidden shadow-2xl h-[250px] md:h-[450px]">
-          <div id="adCarouselInner" class="flex h-full w-full">
-            <!-- Ads will be injected here -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-6 md:pt-8 w-full">
+          <div id="adCarouselContainer" class="hidden relative w-full bg-slate-900 overflow-hidden shadow-2xl rounded-[2rem] border border-white/20 h-[250px] md:h-[450px]">
+            <div id="adCarouselInner" class="flex h-full w-full">
+              <!-- Ads will be injected here -->
+            </div>
+            <!-- Carousel Dots -->
+            <div id="adDots" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-20"></div>
           </div>
-          <!-- Carousel Dots -->
-          <div id="adDots" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-20"></div>
         </div>
 
         <!-- Hero Section -->
@@ -1172,6 +1186,78 @@ ${orderItemsText}
         });
       }, (error) => { console.error(error); list.innerHTML = "<p class='col-span-full text-center text-red-500 font-bold'>Error loading orders.</p>"; });
     }
+
+    // --- PWA SETUP (App Installation Logic) ---
+    const manifest = {
+      "name": "Growthwell Pet Care",
+      "short_name": "Growthwell",
+      "description": "Premium Pet Care Store in Sri Lanka",
+      "start_url": window.location.href,
+      "display": "standalone",
+      "background_color": "#ffffff",
+      "theme_color": "#ef4444",
+      "icons": [
+        { "src": "logo.jpeg", "sizes": "192x192", "type": "image/jpeg" },
+        { "src": "logo.jpeg", "sizes": "512x512", "type": "image/jpeg" }
+      ]
+    };
+    
+    // Inject Dynamic Manifest
+    const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
+    document.querySelector('head').insertAdjacentHTML('beforeend', `<link rel="manifest" href="${URL.createObjectURL(manifestBlob)}">`);
+
+    // Inject Fake Service Worker (Required for PWA Install Prompt)
+    const swCode = `
+      self.addEventListener('install', (e) => { self.skipWaiting(); });
+      self.addEventListener('activate', (e) => { e.waitUntil(self.clients.claim()); });
+      self.addEventListener('fetch', (e) => { e.respondWith(fetch(e.request).catch(() => new Response('Offline Mode.'))); });
+    `;
+    const swBlob = new Blob([swCode], {type: 'application/javascript'});
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(err => console.log("SW logic restricted in preview mode."));
+    }
+
+    // Handle Install Prompt Display
+    let deferredPrompt;
+    const installBtn = document.getElementById('installAppBtn');
+    const mobileInstallBtn = document.getElementById('mobileInstallBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      // Prevent the mini-infobar from appearing on mobile
+      e.preventDefault();
+      // Stash the event so it can be triggered later.
+      deferredPrompt = e;
+      // Update UI notify the user they can install the PWA
+      if(installBtn) installBtn.classList.remove('hidden');
+      if(mobileInstallBtn) mobileInstallBtn.classList.remove('hidden');
+    });
+
+    const handleInstallClick = async () => {
+      if (deferredPrompt) {
+        // Show the install prompt
+        deferredPrompt.prompt();
+        // Wait for the user to respond to the prompt
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          console.log('User accepted the PWA install prompt');
+          if(installBtn) installBtn.classList.add('hidden');
+          if(mobileInstallBtn) mobileInstallBtn.classList.add('hidden');
+        }
+        // We've used the prompt, and can't use it again, throw it away
+        deferredPrompt = null;
+      }
+    };
+
+    if(installBtn) installBtn.addEventListener('click', handleInstallClick);
+    if(mobileInstallBtn) mobileInstallBtn.addEventListener('click', handleInstallClick);
+
+    window.addEventListener('appinstalled', () => {
+      // Hide the app-provided install promotion
+      if(installBtn) installBtn.classList.add('hidden');
+      if(mobileInstallBtn) mobileInstallBtn.classList.add('hidden');
+      deferredPrompt = null;
+      console.log('PWA was installed');
+    });
   </script>
 </body>
 </html>
