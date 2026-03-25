@@ -4,12 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Growthwell Admin | Premium Dashboard</title>
-  
-  <!-- PWA Manifest & Icons -->
-  <link rel="manifest" href="./manifest.json" />
-  <link rel="icon" type="image/png" href="./logo.png" />
-  <link rel="apple-touch-icon" href="./logo.png">
-  <meta name="theme-color" content="#0f172a">
+  <link rel="icon" type="image/jpeg" href="logo.jpeg" />
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -23,9 +18,7 @@
     }
 
     body { font-family: 'Outfit', sans-serif; background-color: #0f172a; color: #e2e8f0; margin: 0; overflow-x: hidden; }
-    
-    /* Fixed 100% to prevent mobile Safari horizontal scroll issues */
-    #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+    #bg-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
     
     .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
     .input { width: 100%; padding: 12px 16px; margin-bottom: 16px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(15, 23, 42, 0.6); color: white; transition: all 0.3s; }
@@ -36,9 +29,7 @@
     
     .tab-btn { color: #94a3b8; border: 1px solid transparent; }
     .tab-btn.active { background: var(--theme-badge); color: var(--theme-text); border: 1px solid var(--theme-badge); font-weight: 600; }
-    
-    /* Added forwards to prevent flicker on iOS */
-    .view-section { display: none; animation: fadeIn 0.4s ease-out forwards; }
+    .view-section { display: none; animation: fadeIn 0.4s ease-out; }
     .active-view { display: block; }
     
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -94,20 +85,18 @@
     .toggle-checkbox:checked + .toggle-label { background-color: var(--theme-badge); }
   </style>
 </head>
-
-<!-- Mobile fix: use standard block layout instead of flex-col to prevent iOS blank screen -->
-<body class="w-full min-h-screen md:flex md:flex-row">
+<body class="min-h-screen flex flex-col md:flex-row w-full">
 
   <div id="bg-canvas"></div>
 
   <!-- Sidebar -->
-  <aside class="w-full md:w-72 glass-panel border-b md:border-b-0 md:border-r border-slate-700/50 sticky top-0 flex flex-col shrink-0 z-50 shadow-lg md:shadow-2xl md:h-screen">
+  <aside class="w-full md:w-72 glass-panel border-b md:border-b-0 md:border-r border-slate-700/50 sticky top-0 flex flex-col z-50 shadow-lg md:shadow-2xl h-screen">
     <div class="p-4 md:p-6 flex justify-between items-center md:block">
       <div class="flex items-center gap-3">
         
         <!-- Interactive Logo Section -->
         <div class="relative flex items-center">
-          <img src="logo.png" alt="Growthwell" class="h-10 md:h-12 object-contain rounded-lg shadow-lg relative z-10 bg-white">
+          <img src="logo3.jpeg" alt="Growthwell" class="h-10 md:h-12 object-contain rounded-lg shadow-lg relative z-10 bg-white">
           
           <!-- Seasonal Overlays -->
           <div id="dec-christmas" class="hidden absolute inset-0 z-20 pointer-events-none">
@@ -137,7 +126,7 @@
       <button class="md:hidden text-3xl text-slate-300 focus:outline-none p-2 rounded-lg hover:bg-slate-800/50 transition" onclick="document.getElementById('mobileNav').classList.toggle('hidden')">☰</button>
     </div>
     
-    <nav id="mobileNav" class="hidden md:flex flex-col flex-grow p-4 space-y-2 bg-slate-900/95 md:bg-transparent backdrop-blur-xl absolute md:relative w-full left-0 top-full md:top-auto border-b md:border-b-0 border-slate-700/50 shadow-2xl md:shadow-none z-50">
+    <nav id="mobileNav" class="hidden md:flex flex-col flex-grow p-4 space-y-2 bg-slate-900/95 md:bg-transparent backdrop-blur-xl absolute md:relative w-full left-0 top-full md:top-auto border-b md:border-b-0 border-slate-700/50 shadow-2xl md:shadow-none z-50 overflow-y-auto">
       <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 ml-2 mt-2">Menu</p>
       <button onclick="switchTab('products')" id="tab-products" class="tab-btn active w-full text-left px-4 py-3.5 rounded-xl transition-all flex items-center gap-3">
         <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
@@ -156,14 +145,14 @@
         Settings & Themes
       </button>
       
-      <!-- Install Admin App Button -->
+      <!-- NEW: Install Admin App Button -->
       <button id="installAppBtn" class="hidden w-full text-left px-4 py-3.5 rounded-xl transition-all flex items-center gap-3 bg-slate-800/80 hover:bg-slate-700/80 text-white font-bold border border-slate-600 mt-2 shadow-lg">
         <svg class="w-5 h-5 shrink-0 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
         Install Admin App
       </button>
 
       <div class="pt-6 mt-auto border-t border-slate-700/50 md:block">
-        <a href="index.html" target="_blank" class="flex items-center justify-center gap-2 w-full text-sm font-semibold text-slate-300 hover:text-white py-3 rounded-xl bg-slate-800/50 hover:bg-slate-700/50 border border-slate-600/50 transition-all">
+        <a href="forgot_password.html" target="_blank" class="flex items-center justify-center gap-2 w-full text-sm font-semibold text-slate-300 hover:text-white py-3 rounded-xl bg-slate-800/50 hover:bg-slate-700/50 border border-slate-600/50 transition-all">
           <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
           Visit Storefront
         </a>
@@ -171,8 +160,8 @@
     </nav>
   </aside>
 
-  <!-- Main Content (Removed overflow classes to fix iOS blank screen bug) -->
-  <main class="flex-grow p-4 md:p-8 w-full max-w-full z-10 pb-24">
+  <!-- Main Content -->
+  <main class="flex-grow p-4 md:p-8 overflow-y-auto overflow-x-hidden w-full max-w-full z-10">
     
     <!-- 1. PRODUCTS VIEW -->
     <section id="view-products" class="view-section active-view max-w-7xl mx-auto w-full">
@@ -195,20 +184,24 @@
             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Product Name</label>
             <input id="pName" placeholder="e.g. Premium Dog Food" class="input">
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-0 sm:gap-4">
-              <div>
-                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Price (Rs.)</label>
-                <input id="pPrice" type="number" placeholder="0.00" class="input">
-              </div>
-              <div>
-                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Pet Type</label>
-                <select id="pType" class="input appearance-none font-medium">
-                  <option value="All">All Pets</option>
-                  <option value="Dog">Dogs 🐶</option>
-                  <option value="Cat">Cats 🐱</option>
-                </select>
-              </div>
-            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-0 sm:gap-4">
+  <div>
+    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Price (Rs.)</label>
+    <input id="pPrice" type="number" placeholder="0.00" class="input">
+  </div>
+  <div>
+    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Discount (%)</label>
+    <input id="pDiscount" type="number" placeholder="e.g. 10" class="input">
+  </div>
+  <div>
+    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Pet Type</label>
+    <select id="pType" class="input appearance-none font-medium">
+      <option value="All">All Pets</option>
+      <option value="Dog">Dogs 🐶</option>
+      <option value="Cat">Cats 🐱</option>
+    </select>
+  </div>
+</div>
 
             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Keywords (Comma separated)</label>
             <input id="pKeywords" placeholder="e.g. food, vitamins" class="input">
@@ -263,7 +256,7 @@
       </div>
     </section>
 
-    <!-- ADVERTISEMENTS VIEW -->
+    <!-- NEW: ADVERTISEMENTS VIEW -->
     <section id="view-ads" class="view-section max-w-7xl mx-auto w-full">
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
         <div>
@@ -727,6 +720,7 @@
         img.onload = function() {
           const canvas = document.createElement('canvas');
           let width = img.width; let height = img.height;
+          // Banners can be wider
           const MAX_WIDTH = 1200; 
           if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
           canvas.width = width; canvas.height = height;
@@ -781,9 +775,11 @@
       }
     };
 
+
     window.addProduct = async () => {
       const name = document.getElementById('pName').value.trim();
       const price = document.getElementById('pPrice').value;
+           const discount = document.getElementById('pDiscount').value;
       const typeRaw = document.getElementById('pType').value;
       const keywordsRaw = document.getElementById('pKeywords').value;
       const desc = document.getElementById('pDesc').value.trim();
@@ -798,8 +794,7 @@
       btn.disabled = true;
 
       try {
-        const prodData = { name, price: parseFloat(price), type, keywords, description: desc, image };
-        
+        const prodData = { name, price: parseFloat(price), discount: discount ? parseFloat(discount) : 0, type, keywords, description: desc, image };
         if (window.editingProductId) {
           btn.innerHTML = `Updating...`;
           await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', window.editingProductId), prodData);
@@ -813,6 +808,7 @@
         
         document.getElementById('pName').value = '';
         document.getElementById('pPrice').value = '';
+document.getElementById('pDiscount').value = '';
         document.getElementById('pKeywords').value = '';
         document.getElementById('pDesc').value = '';
         document.getElementById('pType').value = 'All';
@@ -834,6 +830,7 @@
         
         document.getElementById('pName').value = p.name || '';
         document.getElementById('pPrice').value = p.price || '';
+document.getElementById('pDiscount').value = p.discount || '';
         document.getElementById('pType').value = p.type || 'All';
         document.getElementById('pKeywords').value = (p.keywords || []).join(', ');
         document.getElementById('pDesc').value = p.description || '';
@@ -898,7 +895,10 @@
                 <p class="font-bold text-white text-sm md:text-base truncate pr-2">${p.name}</p>
                 <div class="flex items-center gap-2 mt-1 flex-wrap">
                   ${typeBadge}
-                  <p class="font-extrabold text-sm whitespace-nowrap" style="color:var(--theme-text);">Rs. ${parseFloat(p.price).toFixed(2)}</p>
+                  ${p.discount > 0 
+  ? `<div class="flex flex-col"><span class="line-through text-slate-500 text-xs">Rs. ${parseFloat(p.price).toFixed(2)}</span><span class="font-extrabold text-sm whitespace-nowrap" style="color:var(--theme-text);">Rs. ${(p.price - (p.price * p.discount / 100)).toFixed(2)} <span class="bg-red-500 text-white px-1 rounded text-[10px] ml-1">-${p.discount}%</span></span></div>` 
+  : `<p class="font-extrabold text-sm whitespace-nowrap" style="color:var(--theme-text);">Rs. ${parseFloat(p.price).toFixed(2)}</p>`
+}
                 </div>
               </div>
             </div>
@@ -1045,16 +1045,39 @@
 
   </script>
 
-  <!-- PWA Installation Script for GitHub Pages -->
+  <!-- PWA Installation Script -->
   <script>
+    // --- PWA SETUP (Admin App Installation Logic) ---
+    const manifest = {
+      "name": "Growthwell Admin Portal",
+      "short_name": "GW Admin",
+      "description": "Admin Dashboard for Growthwell Premium Pet Care",
+      "start_url": window.location.href,
+      "display": "standalone",
+      "background_color": "#0f172a",
+      "theme_color": "#ef4444",
+      "icons": [
+        { "src": "logo.jpeg", "sizes": "192x192", "type": "image/png" },
+        { "src": "logo.", "sizes": "512x512", "type": "image/png" }
+      ]
+    };
+    
+    // Inject Dynamic Manifest
+    const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
+    document.querySelector('head').insertAdjacentHTML('beforeend', `<link rel="manifest" href="${URL.createObjectURL(manifestBlob)}">`);
+
+    // Inject Fake Service Worker (Required for PWA Install Prompt)
+    const swCode = `
+      self.addEventListener('install', (e) => { self.skipWaiting(); });
+      self.addEventListener('activate', (e) => { e.waitUntil(self.clients.claim()); });
+      self.addEventListener('fetch', (e) => { e.respondWith(fetch(e.request).catch(() => new Response('Offline Mode.'))); });
+    `;
+    const swBlob = new Blob([swCode], {type: 'application/javascript'});
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-          .then(reg => console.log('Service Worker Registered!'))
-          .catch(err => console.log('Service Worker Registration Failed:', err));
-      });
+      navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(err => console.log("SW logic restricted in preview mode."));
     }
 
+    // Handle Install Prompt Display
     let deferredPrompt;
     const installBtn = document.getElementById('installAppBtn');
 
@@ -1070,18 +1093,22 @@
     if(installBtn) {
       installBtn.addEventListener('click', async () => {
         if (deferredPrompt) {
+          // Show the install prompt
           deferredPrompt.prompt();
+          // Wait for the user to respond to the prompt
           const { outcome } = await deferredPrompt.userChoice;
           if (outcome === 'accepted') {
             console.log('User accepted the PWA install prompt');
             installBtn.classList.add('hidden');
           }
+          // We've used the prompt, and can't use it again, throw it away
           deferredPrompt = null;
         }
       });
     }
 
     window.addEventListener('appinstalled', () => {
+      // Hide the app-provided install promotion
       if(installBtn) installBtn.classList.add('hidden');
       deferredPrompt = null;
       console.log('PWA was installed');
