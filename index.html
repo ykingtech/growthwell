@@ -954,11 +954,20 @@ if (p.discount > 0) {
         let finalPrice = p.discount > 0 ? (p.price - (p.price * p.discount / 100)) : p.price;
         let typeBadge = p.type && p.type !== 'All' ? `<span class="absolute top-4 left-4 bg-white/90 backdrop-blur-md text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border border-slate-100" style="color: var(--theme-text);">${p.type}</span>` : '';
         
+        // අලුතින් එකතු කල Badge Logic එක
+        let specialBadge = '';
+        if (p.badge === 'Sale') {
+            specialBadge = `<span class="absolute top-4 right-4 bg-red-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border border-red-200 animate-pulse">Sale</span>`;
+        } else if (p.badge === 'Promotion') {
+            specialBadge = `<span class="absolute top-4 right-4 bg-amber-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border border-amber-200">Promotion</span>`;
+        }
+        
         list.innerHTML += `
           <div onclick="window.openProductModal('${p.id}')" class="glass-card rounded-3xl hover:-translate-y-2 transition-all duration-300 overflow-hidden flex flex-col h-full group hover:shadow-2xl border border-slate-200 cursor-pointer" onmouseover="this.style.borderColor='var(--theme-from)'; this.style.boxShadow='0 10px 40px -10px var(--theme-bg-glow)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.5)'; this.style.boxShadow='0 10px 40px -10px rgba(0,0,0,0.2)'">
             <div class="h-56 relative overflow-hidden bg-white flex items-center justify-center p-4">
               <img src="${p.image || 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=400&q=80'}" class="max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-110">
               ${typeBadge}
+              ${specialBadge}
               <div class="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-white to-transparent"></div>
             </div>
             <div class="p-6 flex flex-col flex-grow bg-white z-10 relative">
