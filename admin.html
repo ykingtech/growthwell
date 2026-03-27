@@ -90,7 +90,7 @@
   <div id="bg-canvas"></div>
 
   <!-- Sidebar -->
-  <aside class="w-full md:w-72 glass-panel border-b md:border-b-0 md:border-r border-slate-700/50 sticky top-0 flex flex-col z-50 shadow-lg md:shadow-2xl h-screen">
+  <aside class="w-full md:w-72 glass-panel border-b md:border-b-0 md:border-r border-slate-700/50 sticky top-0 flex flex-col z-50 shadow-lg md:shadow-2xl md:h-screen">
     <div class="p-4 md:p-6 flex justify-between items-center md:block">
       <div class="flex items-center gap-3">
         
@@ -184,7 +184,7 @@
             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Product Name</label>
             <input id="pName" placeholder="e.g. Premium Dog Food" class="input">
             
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-0 sm:gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-0 sm:gap-4 mb-2">
   <div>
     <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Price (Rs.)</label>
     <input id="pPrice" type="number" placeholder="0.00" class="input">
@@ -199,6 +199,14 @@
       <option value="All">All Pets</option>
       <option value="Dog">Dogs 🐶</option>
       <option value="Cat">Cats 🐱</option>
+    </select>
+  </div>
+  <div>
+    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Badge (Label)</label>
+    <select id="pBadge" class="input appearance-none font-medium">
+      <option value="">None (සාමාන්‍ය)</option>
+      <option value="Sale">Sale</option>
+      <option value="Promotion">Promotion</option>
     </select>
   </div>
 </div>
@@ -781,6 +789,7 @@
       const price = document.getElementById('pPrice').value;
            const discount = document.getElementById('pDiscount').value;
       const typeRaw = document.getElementById('pType').value;
+           const badge = document.getElementById('pBadge').value;
       const keywordsRaw = document.getElementById('pKeywords').value;
       const desc = document.getElementById('pDesc').value.trim();
       const image = compressedImageBase64 || 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=400&q=80';
@@ -794,7 +803,7 @@
       btn.disabled = true;
 
       try {
-        const prodData = { name, price: parseFloat(price), discount: discount ? parseFloat(discount) : 0, type, keywords, description: desc, image };
+        const prodData = { name, price: parseFloat(price), discount: discount ? parseFloat(discount) : 0, type, badge, keywords, description: desc, image };
         if (window.editingProductId) {
           btn.innerHTML = `Updating...`;
           await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', window.editingProductId), prodData);
@@ -812,6 +821,7 @@ document.getElementById('pDiscount').value = '';
         document.getElementById('pKeywords').value = '';
         document.getElementById('pDesc').value = '';
         document.getElementById('pType').value = 'All';
+                document.getElementById('pBadge').value = '';
         clearImage();
         window.editingProductId = null;
         
@@ -832,6 +842,7 @@ document.getElementById('pDiscount').value = '';
         document.getElementById('pPrice').value = p.price || '';
 document.getElementById('pDiscount').value = p.discount || '';
         document.getElementById('pType').value = p.type || 'All';
+document.getElementById('pBadge').value = p.badge || '';
         document.getElementById('pKeywords').value = (p.keywords || []).join(', ');
         document.getElementById('pDesc').value = p.description || '';
         
